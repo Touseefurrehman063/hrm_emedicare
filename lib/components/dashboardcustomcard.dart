@@ -16,7 +16,7 @@ class Customcontainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: Get.height * 0.095,
+      height: Get.height * 0.075,
       width: Get.width * 0.29,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),

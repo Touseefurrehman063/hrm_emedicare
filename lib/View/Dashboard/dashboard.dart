@@ -11,8 +11,10 @@ import 'package:hrm_emedicare/components/Images/Images.dart';
 import 'package:hrm_emedicare/components/customdashbordcard.dart';
 import 'package:hrm_emedicare/components/customnavbar.dart';
 import 'package:hrm_emedicare/components/dashboardcustomcard.dart';
+import 'package:hrm_emedicare/components/primary_button.dart';
 import 'package:hrm_emedicare/data/controller/auth_controller/auth_controller.dart';
 import 'package:hrm_emedicare/helper/colormanager/color_manager.dart';
+import 'package:hrm_emedicare/utils/class_toaster.dart';
 import 'package:hrm_emedicare/utils/constants/constants.dart';
 import 'package:intl/intl.dart';
 import 'dart:core';
@@ -358,6 +360,59 @@ class Dashboard extends StatelessWidget {
                                         Text("06:00PM"),
                                       ],
                                     ),
+                                  ),
+                                  SizedBox(
+                                    height: Get.height * 0.03,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "Status: ${"Checked In"}",
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: Get.width * 0.04,
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {},
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              ColorManager.kgreencolorstatus,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          '  CHECK-IN  ',
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: Get.width * 0.02,
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {},
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              ColorManager.kOrangeColor,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'CHECK-OUT',
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
                                   )
                                 ],
                               ),

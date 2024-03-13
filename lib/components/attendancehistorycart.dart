@@ -32,8 +32,10 @@ class Attendancehistorycard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Attendancecontroller.i.gettodayattendence();
+    // Adjusting color based on workdayPercent
+    Color color = ColorManager.KgreenColor;
 
+    // Assign trailcolor according to the requirement
     Color trailcolor = ColorManager.kgreencolorstatus;
 
     if (data != null) {
@@ -57,7 +59,6 @@ class Attendancehistorycard extends StatelessWidget {
         trailcolor = const Color.fromARGB(255, 234, 181, 188);
       }
     }
-    Color color = ColorManager.KgreenColor;
 
     if (data != null) {
       String status = data?.status ?? "A";
@@ -78,6 +79,30 @@ class Attendancehistorycard extends StatelessWidget {
         color = ColorManager.kMaroonColor;
       }
     }
+    double percentage = 0.0;
+
+    if (data != null) {
+      DateTime inTime = DateFormat('HH:mm:ss').parse(data!.timeIn!);
+      DateTime outTime = DateFormat('HH:mm:ss').parse(data!.timeOut!);
+      DateTime now = DateTime.now();
+
+      if (now.isAfter(inTime) && now.isBefore(outTime)) {
+        double totalMinutes = outTime.difference(inTime).inMinutes.toDouble();
+        double passedMinutes = now.difference(inTime).inMinutes.toDouble();
+        percentage = passedMinutes / totalMinutes;
+      } else if (now.isAfter(outTime)) {
+        percentage = 0.5;
+      } else if (now.isBefore(inTime)) {
+        // If the current time is before the start time, show 0%
+        percentage = 0.0;
+      } else {
+        // Calculate the percentage based on current time compared to inTime
+        double totalMinutes = inTime.difference(outTime).inMinutes.toDouble();
+        double passedMinutes = now.difference(inTime).inMinutes.toDouble();
+        percentage = passedMinutes / totalMinutes;
+      }
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 05),
       child: Container(
@@ -274,7 +299,11 @@ class Attendancehistorycard extends StatelessWidget {
                             CircularPercentIndicator(
                               radius: 35.0,
                               lineWidth: 8.0,
-                              percent: 0.5,
+                              percent: percentage,
+                              addAutomaticKeepAlive: true,
+                              animationDuration: 2000,
+                              animation: true,
+                              // restartAnimation: true,
                               center: Text(
                                 "inprogress".tr,
                                 textAlign: TextAlign.center,

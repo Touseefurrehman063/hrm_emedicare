@@ -94,31 +94,33 @@ class Todayattandence extends StatelessWidget {
                     ),
                   )
                 : const SizedBox.shrink(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Customattandencestatuscard(
-                    color: const Color(0xff23B480),
-                    title: 'present'.tr,
-                    total: '22',
-                    count: '07'),
-                Customattandencestatuscard(
-                    color: const Color(0xff663CDE),
-                    title: 'Late'.tr,
-                    total: '22',
-                    count: '07'),
-                Customattandencestatuscard(
-                    color: const Color(0xffFF455E),
-                    title: 'absent'.tr,
-                    total: '22',
-                    count: '07'),
-                Customattandencestatuscard(
-                    color: const Color(0xffF2B42A),
-                    title: 'leave'.tr,
-                    total: '22',
-                    count: '07'),
-              ],
-            ),
+            GetBuilder<Attendancecontroller>(builder: (cont) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Customattandencestatuscard(
+                      color: const Color(0xff23B480),
+                      title: 'present'.tr,
+                      total: '22',
+                      count: '07'),
+                  Customattandencestatuscard(
+                      color: const Color(0xff663CDE),
+                      title: 'Late'.tr,
+                      total: '22',
+                      count: '07'),
+                  Customattandencestatuscard(
+                      color: const Color(0xffFF455E),
+                      title: 'absent'.tr,
+                      total: '22',
+                      count: '07'),
+                  Customattandencestatuscard(
+                      color: const Color(0xffF2B42A),
+                      title: 'leave'.tr,
+                      total: '22',
+                      count: '07'),
+                ],
+              );
+            }),
             SizedBox(
               height: Get.height * 0.02,
             ),
