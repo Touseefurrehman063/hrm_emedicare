@@ -5,12 +5,20 @@ import 'package:hrm_emedicare/components/leavestatuscard.dart';
 import 'package:hrm_emedicare/data/controller/leave_controller/leave_controller.dart';
 import 'package:hrm_emedicare/helper/colormanager/color_manager.dart';
 
-class LeaveStatus extends StatelessWidget {
+class LeaveStatus extends StatefulWidget {
   const LeaveStatus({super.key});
 
   @override
+  State<LeaveStatus> createState() => _LeaveStatusState();
+
+  static LeaveStatus? fromJson(result) {
+    return null;
+  }
+}
+
+class _LeaveStatusState extends State<LeaveStatus> {
+  @override
   Widget build(BuildContext context) {
-    LeaveController.i.getleavestatus();
     return SingleChildScrollView(
       child: GetBuilder<LeaveController>(builder: (cont) {
         return Padding(
@@ -46,45 +54,43 @@ class LeaveStatus extends StatelessWidget {
             SizedBox(
               height: Get.height * 0.02,
             ),
-            ListView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: 4,
-                shrinkWrap: true,
-                itemBuilder: (ctx, index) {
-                  String leaveStatus =
-                      "${LeaveController.i.leavestatus?.table?[index].leaveStatus}";
-                  Color? trailingColor;
-                  switch (leaveStatus.toLowerCase()) {
-                    case 'rejected':
-                      trailingColor = ColorManager.kRedColor;
-                      break;
-                    case 'forward':
-                      trailingColor = ColorManager.kyellowContainer;
-                      break;
-                    case 'approved':
-                      trailingColor = ColorManager.KgreenColor;
-                      break;
-                    case 'cancel':
-                      trailingColor = ColorManager.kRedColor;
-                      break;
+            GetBuilder<LeaveController>(builder: (cont) {
+              return ListView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: LeaveController.i.leavestatus?.table?.length ?? 0,
+                  shrinkWrap: true,
+                  itemBuilder: (ctx, index) {
+                    String leaveStatus =
+                        "${LeaveController.i.leavestatus?.table?[index].leaveStatus}";
+                    Color? trailingColor;
+                    switch (leaveStatus.toLowerCase()) {
+                      case 'rejected':
+                        trailingColor = ColorManager.kRedColor;
+                        break;
+                      case 'forward':
+                        trailingColor = ColorManager.kyellowContainer;
+                        break;
+                      case 'approved':
+                        trailingColor = ColorManager.KgreenColor;
+                        break;
+                      case 'cancel':
+                        trailingColor = ColorManager.kRedColor;
+                        break;
 
-                    default:
-                      trailingColor = Colors.grey;
-                      break;
-                  }
-                  return LeaveStatusCard(
-                    trailingcolor: trailingColor,
-                    text: leaveStatus,
-                    i: index,
-                  );
-                })
+                      default:
+                        trailingColor = Colors.grey;
+                        break;
+                    }
+                    return LeaveStatusCard(
+                      trailingcolor: trailingColor,
+                      text: leaveStatus,
+                      i: index,
+                    );
+                  });
+            })
           ]),
         );
       }),
     );
-  }
-
-  static LeaveStatus? fromJson(result) {
-    return null;
   }
 }

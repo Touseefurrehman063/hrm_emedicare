@@ -14,6 +14,12 @@ import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class LeaveController extends GetxController {
+  bool isLeaveLoading = false;
+  updateisLeaveLoading(bool val) {
+    isLeaveLoading = val;
+    update();
+  }
+
   @override
   void dispose() {
     selectedlinemanagerlist.clear();
@@ -227,8 +233,10 @@ class LeaveController extends GetxController {
   }
 
   getleavestatus() async {
-    leavestatus = await LeaveRepository.getleavestatus();
-    update();
+    try {
+      leavestatus = await LeaveRepository.getleavestatus();
+      update();
+    } catch (e) {}
   }
 
   SubmitModel? submitleave;
@@ -254,13 +262,8 @@ class LeaveController extends GetxController {
   }
 
   List<SubDepartment>? department;
-  // updatdepartment(DepartmentModel d) {
-  //   department = d;
-  //   update();
-  // }
-
-  getdepaartment(userid) async {
-    department = await LeaveRepository.getdepartment(userid);
+  getdepaartment() async {
+    department = await LeaveRepository.getdepartment();
 
     update();
   }

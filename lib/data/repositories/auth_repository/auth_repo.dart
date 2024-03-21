@@ -11,13 +11,13 @@ import 'package:hrm_emedicare/utils/constants/constants.dart';
 import 'package:http/http.dart' as http;
 
 class AuthRepo {
-  static login(username, password, devicetoken) async {
+  static login(username, password) async {
+    String? devicetoken = await Prefs().getDeviceToken();
     var body = {
       'UserName': username,
       'Password': password,
       'IsDependent': "false",
-      'DeviceToken':
-          "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjE6MzA5OTgxNzIzMzU3OmFuZHJvaWQ6MDY2NTZlNWJkODBhYzdiZDZjMzkzNCIsImV4cCI6MTY3ODk2MDk0MiwiZmlkIjoiZFRBMlNzZmZTN3FySE4tU3lsQ2tMaSIsInByb2plY3ROdW1iZXIiOjMwOTk4MTcyMzM1N30.AB2LPV8wRQIgXM80WhWCPvaHGoym8-RcAGzoxSs8E7VCbnnzmZmB_rQCIQCFbLrGSVU_4tWdd1ltVD1iECi1pe9rplhgepTaeZlXSw",
+      'DeviceToken': devicetoken,
       'Manufacturer': "Browser",
       'Model': "",
       'AppVersion': "Mobile",
@@ -26,6 +26,7 @@ class AuthRepo {
     };
     var headers = {'Content-Type': 'application/json'};
 
+    print(body);
     try {
       var response = await http.post(Uri.parse(AppConstants.login),
           body: jsonEncode(body), headers: headers);
@@ -37,11 +38,15 @@ class AuthRepo {
 
         // Prefs().init();
         Prefs().setuser(data.id);
-
+        Prefs().saveUserId(data.id);
+        Prefs().saveOrganizationId(data.organizationId);
+        Prefs().saveImagePath(data.imagePath);
+        Prefs().saveUserDesignation(data.userDisplayDesignation);
+        Prefs().saveEmployeeNo(data.employeeNumber);
         AuthController.i.updateuser(data);
         AuthController.i.getuserprofile();
-        Showtoaster()
-            .classtoaster(result['ErrorMessage'], ColorManager.kPrimaryColor);
+        // Showtoaster()
+        //     .classtoaster(result['ErrorMessage'], ColorManager.kPrimaryColor);
         return data;
       } else {
         Showtoaster()
@@ -77,10 +82,12 @@ class AuthRepo {
   }
 
   static logout() async {
+    String? devicetoken = await Prefs().getDeviceToken();
+    print(devicetoken);
+    String? userid = await Prefs().getUserId();
     var body = {
-      "UserId": AuthController.i.userProfile?.id,
-      "DeviceToken":
-          "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBJZCI6IjE6MzA5OTgxNzIzMzU3OmFuZHJvaWQ6MDY2NTZlNWJkODBhYzdiZDZjMzkzNCIsImV4cCI6MTY3ODk2MDk0MiwiZmlkIjoiZFRBMlNzZmZTN3FySE4tU3lsQ2tMaSIsInByb2plY3ROdW1iZXIiOjMwOTk4MTcyMzM1N30.AB2LPV8wRQIgXM80WhWCPvaHGoym8-RcAGzoxSs8E7VCbnnzmZmB_rQCIQCFbLrGSVU_4tWdd1ltVD1iECi1pe9rplhgepTaeZlXSw"
+      "UserId": userid,
+      "DeviceToken": devicetoken,
     };
     var headers = {'Content-Type': 'application/json'};
 
@@ -96,8 +103,8 @@ class AuthRepo {
         // Prefs().init();
         // Prefs().setuser(data.id);
 
-        Showtoaster()
-            .classtoaster(result['SuccessMessage'], ColorManager.kPrimaryColor);
+        // Showtoaster()
+        //     .classtoaster(result['SuccessMessage'], ColorManager.kPrimaryColor);
         return data;
       } else {
         Showtoaster()

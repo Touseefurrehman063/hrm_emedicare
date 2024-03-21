@@ -49,7 +49,7 @@ class ChangePassword extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // SizedBox(height: Get.height * 0.12),
+                        SizedBox(height: Get.height * 0.12),
                         Center(
                           child: Image.asset(
                             Images.logo,
@@ -133,7 +133,7 @@ class ChangePassword extends StatelessWidget {
                           maxLines: 1,
                           obscureText: cont.newconfirmpassword,
                         ),
-                        SizedBox(height: Get.height * 0.15),
+                        SizedBox(height: Get.height * 0.1),
                         Center(
                           child: PrimaryButton(
                             title: 'submitt'.tr,

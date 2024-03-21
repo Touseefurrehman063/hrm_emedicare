@@ -1,17 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hrm_emedicare/components/attendancehistorycart.dart';
 import 'package:hrm_emedicare/components/customattendancecard.dart';
 import 'package:hrm_emedicare/data/controller/attendence_controller/attendancecontroller.dart';
 import 'package:hrm_emedicare/helper/colormanager/color_manager.dart';
 
-class Todayattandence extends StatelessWidget {
+class Todayattandence extends StatefulWidget {
   const Todayattandence({super.key});
 
   @override
+  State<Todayattandence> createState() => _TodayattandenceState();
+}
+
+class _TodayattandenceState extends State<Todayattandence> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getData();
+  }
+
+  void getData() async {
+    Future.delayed(Duration.zero).then((value) {
+      Attendancecontroller.i.UpdatedateTimealert2(DateTime.now());
+      Attendancecontroller.i.UpdatedateTimealert(
+          DateTime.now().subtract(const Duration(days: 30)));
+      Attendancecontroller.i.gettodayattendence();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    Attendancecontroller.i.gettodayattendence();
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.symmetric(
@@ -19,108 +38,31 @@ class Todayattandence extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Attendancecontroller.i.index == 1
-                ? Padding(
-                    padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(left: Get.width * 0.04),
-                              child: Text("from".tr),
-                            ),
-                            const Card(
-                              child: Padding(
-                                padding: EdgeInsets.all(8),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.calendar_month),
-                                    Text("20-07-2022")
-                                  ],
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: Get.height * 0.03,
-                          ),
-                          child: Text("-",
-                              style: GoogleFonts.poppins(fontSize: 30)),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(left: Get.width * 0.04),
-                              child: Text("to".tr),
-                            ),
-                            const Card(
-                              child: Padding(
-                                padding: EdgeInsets.all(8),
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.calendar_month),
-                                    Text("20-08-2022")
-                                  ],
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(
-                              top: Get.height * 0.03, right: Get.width * 0.05),
-                          child: Container(
-                            decoration: const BoxDecoration(
-                              color: ColorManager.kgreencolorstatus,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Padding(
-                              padding: EdgeInsets.all(8),
-                              child: Icon(
-                                Icons.search,
-                                color: ColorManager.kWhiteColor,
-                              ),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  )
-                : const SizedBox.shrink(),
-            GetBuilder<Attendancecontroller>(builder: (cont) {
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Customattandencestatuscard(
-                      color: const Color(0xff23B480),
-                      title: 'present'.tr,
-                      total: '22',
-                      count: '07'),
-                  Customattandencestatuscard(
-                      color: const Color(0xff663CDE),
-                      title: 'Late'.tr,
-                      total: '22',
-                      count: '07'),
-                  Customattandencestatuscard(
-                      color: const Color(0xffFF455E),
-                      title: 'absent'.tr,
-                      total: '22',
-                      count: '07'),
-                  Customattandencestatuscard(
-                      color: const Color(0xffF2B42A),
-                      title: 'leave'.tr,
-                      total: '22',
-                      count: '07'),
-                ],
-              );
-            }),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Customattandencestatuscard(
+                    color: const Color(0xff23B480),
+                    title: 'present'.tr,
+                    total: '22',
+                    count: '07'),
+                Customattandencestatuscard(
+                    color: const Color(0xff663CDE),
+                    title: 'Late'.tr,
+                    total: '22',
+                    count: '07'),
+                Customattandencestatuscard(
+                    color: const Color(0xffFF455E),
+                    title: 'absent'.tr,
+                    total: '22',
+                    count: '07'),
+                Customattandencestatuscard(
+                    color: const Color(0xffF2B42A),
+                    title: 'leave'.tr,
+                    total: '22',
+                    count: '07'),
+              ],
+            ),
             SizedBox(
               height: Get.height * 0.02,
             ),
@@ -129,23 +71,16 @@ class Todayattandence extends StatelessWidget {
                 children: [
                   ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: Attendancecontroller.i.index == 0
-                          ? 1
-                          : Attendancecontroller
-                              .i.todayattendence?.data?.length,
+                      itemCount: 1,
                       shrinkWrap: true,
                       itemBuilder: (ctx, index) {
-                        final data = Attendancecontroller.i.index == 0
-                            ? Attendancecontroller.i.todayattendence?.data?.last
-                            : Attendancecontroller
-                                .i.todayattendence?.data?[index];
+                        final data =
+                            Attendancecontroller.i.todayattendence?.data?.last;
 
                         String statusText = "";
                         Color trailcolor = ColorManager.KgreenColor;
-
+                        String status = data?.status ?? "Present";
                         if (data != null) {
-                          String status = data.status ?? "A";
-
                           if (status == "Present") {
                             statusText = 'P';
                             trailcolor = ColorManager.KgreenColor;
@@ -173,6 +108,7 @@ class Todayattandence extends StatelessWidget {
                         return Attendancehistorycard(
                             trailingcolor: trailcolor,
                             text: statusText,
+                            status: status,
                             data: data);
                       }),
                   SizedBox(

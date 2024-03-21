@@ -16,9 +16,16 @@ import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class AuthController extends GetxController implements GetxService {
+  static AuthController get i => Get.put(AuthController());
   bool isloginbutton = false;
   updateisloginbuttion(bool val) {
     isloginbutton = val;
+    update();
+  }
+
+  bool islogoutbutton = false;
+  updateislogoutbuttion(bool val) {
+    islogoutbutton = val;
     update();
   }
 
@@ -33,7 +40,6 @@ class AuthController extends GetxController implements GetxService {
   TextEditingController? tocontroller;
   String fromAddress = '';
   String toAddress = '';
-  static AuthController get i => Get.put(AuthController());
 
   updateobsecurepassword(bool ob) {
     obsecure = !obsecure;
@@ -124,7 +130,7 @@ class AuthController extends GetxController implements GetxService {
   // }
 
   getdepaartment(userid) async {
-    department = await LeaveRepository.getdepartment(userid);
+    department = await LeaveRepository.getdepartment();
     update();
   }
 
@@ -135,7 +141,10 @@ class AuthController extends GetxController implements GetxService {
   }
 
   getlogininformation(username, pass) async {
-    user = await AuthRepo.login(username, pass, "");
+    user = await AuthRepo.login(
+      username,
+      pass,
+    );
     if (user?.id != null) {
       AuthController.i.emailController.clear();
       AuthController.i.passwordController.clear();
@@ -150,6 +159,7 @@ class AuthController extends GetxController implements GetxService {
     logof = await AuthRepo.logout();
     if (logof?.status == 1) {
       Prefs().setuser("");
+      Prefs().saveUserId("");
       Get.offAll(Login());
     }
     update();
@@ -168,8 +178,8 @@ class AuthController extends GetxController implements GetxService {
   }
 
   getuserprofile() async {
-    String? username = await Prefs().getuser();
-    userProfile = await AuthRepo.userdetail(username ?? "");
+    String? userid = await Prefs().getUserId();
+    userProfile = await AuthRepo.userdetail(userid ?? "");
     update();
   }
 

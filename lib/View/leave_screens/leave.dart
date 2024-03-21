@@ -68,7 +68,7 @@ class Leave extends StatelessWidget {
               children: {
                 0: Text(
                   "applyleaves".tr,
-                  style: TextStyle(
+                  style: GoogleFonts.poppins(
                     color: cnt.index == 0
                         ? Colors.white
                         : ColorManager.kblackColor,
@@ -76,7 +76,7 @@ class Leave extends StatelessWidget {
                 ),
                 1: Text(
                   "leavestatus".tr,
-                  style: TextStyle(
+                  style: GoogleFonts.poppins(
                     color: cnt.index == 1
                         ? Colors.white
                         : ColorManager.kblackColor,
@@ -89,20 +89,20 @@ class Leave extends StatelessWidget {
               ),
               // padding: 10,
               thumbDecoration: BoxDecoration(
-                boxShadow: const [
-                  BoxShadow(
-                    offset: Offset(1, 1),
-                    color: ColorManager.kGreyColor,
-                    spreadRadius: 1,
-                    blurRadius: 1,
-                  ),
-                  BoxShadow(
-                    offset: Offset(-1, -1),
-                    spreadRadius: 1,
-                    blurRadius: 1,
-                    color: ColorManager.kGreyColor,
-                  )
-                ],
+                // boxShadow: const [
+                //   BoxShadow(
+                //     offset: Offset(1, 1),
+                //     color: ColorManager.kGreyColor,
+                //     spreadRadius: 1,
+                //     blurRadius: 1,
+                //   ),
+                //   BoxShadow(
+                //     offset: Offset(-1, -1),
+                //     spreadRadius: 1,
+                //     blurRadius: 1,
+                //     color: ColorManager.kGreyColor,
+                //   )
+                // ],
                 borderRadius:
                     cnt.index == 0 ? cnt.dynamicBorder : cnt.rightborder,
                 gradient: const LinearGradient(

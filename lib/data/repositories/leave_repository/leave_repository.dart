@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
-
 import 'package:hrm_emedicare/data/controller/auth_controller/auth_controller.dart';
 import 'package:hrm_emedicare/data/controller/leave_controller/leave_controller.dart';
+import 'package:hrm_emedicare/data/localdb/localdb.dart';
 import 'package:hrm_emedicare/helper/colormanager/color_manager.dart';
 import 'package:hrm_emedicare/models/department_model/department_model.dart';
 import 'package:hrm_emedicare/models/leave_status/leave_status.dart';
@@ -15,8 +15,11 @@ import 'package:hrm_emedicare/utils/constants/constants.dart';
 import 'package:http/http.dart' as http;
 
 class LeaveRepository {
-  static getdepartment(userid) async {
-    var body = {"UserId": userid};
+  static getdepartment() async {
+    String? userid = await Prefs().getUserId();
+    var body = {
+      "UserId": userid,
+    };
     var headers = {'Content-Type': 'application/json'};
 
     try {
@@ -133,9 +136,9 @@ class LeaveRepository {
   }
 
   static submitleave() async {
-    //  final date1 = await LeaveController.i.selectDate();
+    String? userid = await Prefs().getUserId();
     var body = {
-      "UserId": AuthController.i.userProfile?.id,
+      "UserId": userid,
       "LeaveTypeId": LeaveController.i.selectleavetype?.id,
       "IsShortLeave": LeaveController.i.selectedLeaveType.toString(),
       "LeaveAttachmentPath": LeaveController.i.pmcfile?.path,
@@ -173,35 +176,43 @@ class LeaveRepository {
   }
 
   static getleavestatus() async {
+    String? userid = await Prefs().getUserId();
     var body = {
-      "UserId": AuthController.i.userProfile?.id,
+      "UserId": userid,
       "Start": 0,
-      "Length": 10,
+      "Length": 100,
       "FilterRecord": ""
     };
+
     var headers = {'Content-Type': 'application/json'};
 
     try {
+      LeaveController.i.updateisLeaveLoading(true);
       var response = await http.post(Uri.parse(AppConstants.leaveStatus),
           body: jsonEncode(body), headers: headers);
+
       // ignore: unused_local_variable
       var result = jsonDecode(response.body);
       if (response.statusCode == 200) {
-        // Iterable dt = result['Table'];
         LeaveStatusModel leavestatusdata =
             LeaveStatusModel.fromJson(jsonDecode(response.body));
-
+        LeaveController.i.updateisLeaveLoading(false);
         return leavestatusdata;
-      } else {}
+      } else {
+        LeaveController.i.updateisLeaveLoading(false);
+      }
     } catch (e) {
+      LeaveController.i.updateisLeaveLoading(false);
       return e;
     }
   }
 
   static getLineManagers() async {
+    String? userid = await Prefs().getUserId();
+    String? organizationid = await Prefs().getOrganizationId();
     var body = {
-      "UserId": AuthController.i.userProfile?.id,
-      "OrganizationId": AuthController.i.user?.organizationId,
+      "UserId": userid,
+      "OrganizationId": organizationid,
     };
     var headers = {'Content-Type': 'application/json'};
     log(jsonEncode(body));

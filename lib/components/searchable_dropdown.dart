@@ -107,21 +107,6 @@ searchableDropdown(
                   ],
                 ),
               ),
-              // actions: [
-              //   ElevatedButton(
-              //     onPressed: () {
-              //       if (generic == null) {
-              //         // Validation check: No item selected.
-              //         setState(() {
-              //           errorText = 'Please select an item';
-              //         });
-              //       } else {
-              //         Navigator.pop(context);
-              //       }
-              //     },
-              //     child: const Text('OK'),
-              //   ),
-              // ],
             ),
           );
         },

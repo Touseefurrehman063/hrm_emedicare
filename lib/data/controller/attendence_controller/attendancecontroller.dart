@@ -2,8 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hrm_emedicare/data/repositories/attendence_repository/attendence_repsoitory.dart';
 import 'package:hrm_emedicare/models/today_attendence_model/today_attendence_model.dart';
+import 'package:intl/intl.dart';
 
 class Attendancecontroller extends GetxController {
+  bool isattendanceLoading = false;
+  updateisattendanceLoading(bool val) {
+    isattendanceLoading = val;
+    update();
+  }
+
+  final dateFormatalert = DateFormat('yyyy-MM-dd');
+  DateTime dateTimealert = DateTime.now().subtract(const Duration(days: 30));
+  DateTime dateTime2alert = DateTime.now();
+  UpdatedateTimealert(DateTime dt) {
+    dateTimealert = dt;
+    update();
+  }
+
+  UpdatedateTimealert2(DateTime dt) {
+    dateTime2alert = dt;
+    update();
+  }
+
   BorderRadius dynamicBorder = const BorderRadius.only(
     topLeft: Radius.circular(30),
     bottomLeft: Radius.circular(30),
@@ -26,7 +46,6 @@ class Attendancecontroller extends GetxController {
 
   gettodayattendence() async {
     todayattendence = await AttendanceRepo.todayattendence();
-
     update();
   }
 
@@ -37,9 +56,8 @@ class Attendancecontroller extends GetxController {
 
     String hours = duration.split(':')[0];
     String minutes = duration.split(':')[1];
-    String seconds = duration.split(':')[2];
 
-    return '$hours h $minutes m $seconds s';
+    return '$hours h $minutes m';
   }
 
   static Attendancecontroller get i => Get.put(Attendancecontroller());

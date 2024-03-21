@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "132480847786",
+    "project_id": "hrm-application-e0c99",
+    "storage_bucket": "hrm-application-e0c99.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:132480847786:android:b5b7c6ee5dbf5c037ea5d3",
+        "android_client_info": {
+          "package_name": "com.techovative.hrm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKmhp85K_C5n7uEqoW3OWtnNaOASoiprI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

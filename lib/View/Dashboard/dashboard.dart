@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hrm_emedicare/View/leave_screens/leave.dart';
@@ -10,16 +11,46 @@ import 'package:hrm_emedicare/View/pay_slip/pay_slip.dart';
 import 'package:hrm_emedicare/components/Images/Images.dart';
 import 'package:hrm_emedicare/components/customdashbordcard.dart';
 import 'package:hrm_emedicare/components/customnavbar.dart';
+import 'package:hrm_emedicare/components/dashboard_painter_progress.dart';
+import 'package:hrm_emedicare/components/dashboard_progress_dot.dart';
 import 'package:hrm_emedicare/components/dashboardcustomcard.dart';
-import 'package:hrm_emedicare/components/primary_button.dart';
 import 'package:hrm_emedicare/data/controller/auth_controller/auth_controller.dart';
+import 'package:hrm_emedicare/data/controller/get_current_location_controller.dart';
+import 'package:hrm_emedicare/data/repositories/attendence_repository/attendence_repsoitory.dart';
 import 'package:hrm_emedicare/helper/colormanager/color_manager.dart';
-import 'package:hrm_emedicare/utils/class_toaster.dart';
 import 'package:hrm_emedicare/utils/constants/constants.dart';
 import 'package:intl/intl.dart';
 import 'dart:core';
 import 'package:flutter_calendar_week/flutter_calendar_week.dart';
-import 'package:timelines/timelines.dart';
+import 'package:shimmer/shimmer.dart';
+
+String getTimeDifference() {
+  DateTime currentTimePakistan =
+      DateTime.now().toUtc().add(const Duration(hours: 5));
+  const int officeStartHour = 9;
+  const int officeEndHour = 18;
+  const int officeEndMinute = 0;
+
+  final int currentHour = currentTimePakistan.hour;
+  final int currentMinute = currentTimePakistan.minute;
+
+  if (currentHour >= officeStartHour &&
+      (currentHour < officeEndHour ||
+          (currentHour == officeEndHour && currentMinute <= officeEndMinute))) {
+    // During office hours (from 9am to 12:05pm)
+    final int elapsedHours = currentHour - officeStartHour;
+    final int elapsedMinutes = currentMinute;
+    return '${elapsedHours}h ${elapsedMinutes}min';
+  } else if ((currentHour == officeEndHour &&
+          currentMinute > officeEndMinute) ||
+      (currentHour > officeEndHour && currentHour < 24)) {
+    // After office hours until midnight (from 12:06pm to 12:00am)
+    return '9h 0min';
+  } else {
+    // From midnight until office hours start (from 12:01am to 9am)
+    return '0h 0min';
+  }
+}
 
 // ignore: must_be_immutable
 class Dashboard extends StatelessWidget {
@@ -29,6 +60,18 @@ class Dashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AuthController.i.getuserprofile();
+    DateTime now = DateTime.now()
+        .toUtc()
+        .add(const Duration(hours: 5)); // Convert to Pakistan time
+    double progressValue = now.hour / 24; // Assuming 24-hour day
+    String centerText = DateTime.now().weekday == DateTime.friday
+        ? '01:15PM - 2:45PM'
+        : '01:15PM - 2:30PM';
+
+    // WORKING TIME
+    String timeDifference = getTimeDifference();
+
     return Material(
       child: Scaffold(
         bottomNavigationBar: Customnavbar(
@@ -55,10 +98,10 @@ class Dashboard extends StatelessWidget {
                   ListTile(
                     leading: InkWell(
                       onTap: () {
-                        if (ZoomDrawer.of(context)!.isOpen()) {
-                          ZoomDrawer.of(context)!.close();
+                        if (ZoomDrawer.of(context)?.isOpen() ?? false) {
+                          ZoomDrawer.of(context)?.close();
                         } else {
-                          ZoomDrawer.of(context)!.open();
+                          ZoomDrawer.of(context)?.open();
                         }
                       },
                       child: Image.asset(
@@ -84,7 +127,7 @@ class Dashboard extends StatelessWidget {
                                                     .i.userProfile?.picturePath,
                                             height: Get.height * 0.07,
                                             width: Get.width * 0.15,
-                                            fit: BoxFit.fill,
+                                            fit: BoxFit.cover,
                                           )
                                         : Image.asset(
                                             Images.temppicture,
@@ -197,9 +240,7 @@ class Dashboard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        SizedBox(
-                          height: 10.h,
-                        ),
+                        SizedBox(height: Get.height * 0.04),
                         Container(
                           padding: const EdgeInsets.only(left: 10),
                           child: Row(
@@ -232,24 +273,23 @@ class Dashboard extends StatelessWidget {
                         ),
                         CalendarWeek(
                           controller: CalendarWeekController(),
-                          height: 110.h,
+                          height: Get.height * 0.13,
                           todayBackgroundColor: ColorManager.kOrangeColor,
-
-                          todayDateStyle:
-                              const TextStyle(color: ColorManager.kWhiteColor),
-                          // weekendsStyle:
-                          // //     const TextStyle(color: ColorManager.),
-                          weekendsStyle:
-                              const TextStyle(color: ColorManager.kblueColor),
+                          todayDateStyle: GoogleFonts.poppins(
+                              color: ColorManager.kWhiteColor),
+                          weekendsStyle: GoogleFonts.poppins(
+                              color: ColorManager.kblackColor),
+                          dayOfWeekStyle: GoogleFonts.poppins(
+                              color: ColorManager.kblackColor),
+                          dateStyle: GoogleFonts.poppins(
+                              color: ColorManager.kblackColor),
                           weekendsIndexes: const [6],
-                          // showMonth: true,
                           minDate: DateTime.now().add(
                             const Duration(days: -365),
                           ),
                           maxDate: DateTime.now().add(
                             const Duration(days: 365),
                           ),
-
                           onDatePressed: (DateTime datetime) {
                             // Do something
                           },
@@ -258,17 +298,25 @@ class Dashboard extends StatelessWidget {
                           },
                           monthViewBuilder: (DateTime time) => Align(
                             alignment: FractionalOffset.bottomLeft,
-                            child: Container(
-                                child: Text(
+                            child: Text(
                               DateFormat.yMMMM().format(time),
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.center,
                               style: GoogleFonts.poppins(
-                                  fontSize: 14.h,
+                                  fontSize: 12.h,
                                   color: ColorManager.kWhiteColor,
                                   fontWeight: FontWeight.w400),
-                            )),
+                            ),
                           ),
+                          dayOfWeek: const [
+                            "M",
+                            "T",
+                            "W",
+                            "T",
+                            "F",
+                            "S",
+                            "S",
+                          ],
                           decorations: [
                             DecorationItem(
                               decorationAlignment: FractionalOffset.bottomRight,
@@ -299,7 +347,7 @@ class Dashboard extends StatelessWidget {
                                       ),
                                       const Spacer(),
                                       const Icon(Icons.timer),
-                                      Text("8h 30min",
+                                      Text(timeDifference,
                                           style: GoogleFonts.poppins(
                                               fontSize: 14.h,
                                               fontWeight: FontWeight.bold)),
@@ -312,54 +360,45 @@ class Dashboard extends StatelessWidget {
                                   SizedBox(
                                     height: 8.h,
                                   ),
-                                  TimelineTile(
-                                    // direction: Axis.horizontal,
-                                    node: const DotIndicator(
-                                      color: Colors.green,
-                                    ),
-
-                                    nodeAlign: TimelineNodeAlign.start,
-
-                                    contents: const Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Expanded(
-                                          child: LinearProgressIndicator(
-                                            value: 01,
-                                            minHeight: 2,
-                                            color: Colors.green,
-                                            backgroundColor: Color(0xffF48020),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      SizedBox(
+                                        width: Get.width * 0.7,
+                                        child: CustomPaint(
+                                          painter:
+                                              ProgressPainter(progressValue),
+                                          child: Container(
+                                            height:
+                                                13, // Decreased height of the progress line
                                           ),
                                         ),
-                                        DotIndicator(
-                                          color: Color(0xffF48020),
-                                        ),
-                                        Expanded(
-                                          child: LinearProgressIndicator(
-                                            value: 0,
-                                            minHeight: 2,
-                                            backgroundColor: Color(0xffF48020),
+                                      ),
+                                      SizedBox(
+                                          height: Get.height *
+                                              0.01), // Adjusted spacing
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          const Dot(
+                                            icon: Icons.access_time,
+                                            label: '09:00AM',
+                                            position: 0,
                                           ),
-                                        ),
-                                        DotIndicator(
-                                          color: Color(0xffF48020),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: actualWidthDP * 0.015),
-                                    child: const Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text("9:00 AM"),
-                                        Text("01:15PM - 2:30PM"),
-                                        Text("06:00PM"),
-                                      ],
-                                    ),
+                                          Text(
+                                            centerText,
+                                            style: GoogleFonts.poppins(
+                                                fontSize: 11),
+                                          ),
+                                          const Dot(
+                                            icon: Icons.access_time,
+                                            label: '06:00PM',
+                                            position: 1,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                   SizedBox(
                                     height: Get.height * 0.03,
@@ -373,45 +412,135 @@ class Dashboard extends StatelessWidget {
                                         ),
                                       ),
                                       SizedBox(
-                                        width: Get.width * 0.04,
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () {},
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              ColorManager.kgreencolorstatus,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                        ),
-                                        child: Text(
-                                          '  CHECK-IN  ',
-                                          style: GoogleFonts.poppins(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                      SizedBox(
                                         width: Get.width * 0.02,
                                       ),
-                                      ElevatedButton(
-                                        onPressed: () {},
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              ColorManager.kOrangeColor,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
+                                      GetBuilder<LocationController>(
+                                          builder: (cont) {
+                                        return ElevatedButton(
+                                          onPressed: () async {
+                                            try {
+                                              LocationController.i
+                                                  .updateisInLoading(true);
+                                              AttendanceRepo ar =
+                                                  AttendanceRepo();
+                                              Position position =
+                                                  await LocationController.i
+                                                      .determinePosition();
+                                              String latitude =
+                                                  position.latitude.toString();
+                                              String longitude =
+                                                  position.longitude.toString();
+                                              String address =
+                                                  await LocationController.i
+                                                      .getAddressFromLatLong(
+                                                          position);
+
+                                              await ar.submitAttendance("0",
+                                                  latitude, longitude, address);
+                                              LocationController.i
+                                                  .updateisInLoading(false);
+                                            } catch (e) {
+                                              LocationController.i
+                                                  .updateisInLoading(false);
+                                            }
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                ColorManager.kgreencolorstatus,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
                                           ),
-                                        ),
-                                        child: Text(
-                                          'CHECK-OUT',
-                                          style: GoogleFonts.poppins(
-                                              fontSize: 10,
-                                              fontWeight: FontWeight.bold),
-                                        ),
+                                          child: cont.isInLoading
+                                              ? Shimmer.fromColors(
+                                                  baseColor:
+                                                      Colors.grey.shade300,
+                                                  highlightColor:
+                                                      Colors.grey.shade500,
+                                                  enabled: LocationController
+                                                      .i.isInLoading,
+                                                  child: Text(
+                                                    '  CHECK-IN  ',
+                                                    style: GoogleFonts.poppins(
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                )
+                                              : Text(
+                                                  '  CHECK-IN  ',
+                                                  style: GoogleFonts.poppins(
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                        );
+                                      }),
+                                      SizedBox(
+                                        width: Get.width * 0.01,
                                       ),
+                                      GetBuilder<LocationController>(
+                                          builder: (cont) {
+                                        return ElevatedButton(
+                                          onPressed: () async {
+                                            try {
+                                              LocationController.i
+                                                  .updateisOutLoading(true);
+                                              AttendanceRepo ar =
+                                                  AttendanceRepo();
+                                              Position position =
+                                                  await LocationController.i
+                                                      .determinePosition();
+                                              String latitude =
+                                                  position.latitude.toString();
+                                              String longitude =
+                                                  position.longitude.toString();
+                                              String address =
+                                                  await LocationController.i
+                                                      .getAddressFromLatLong(
+                                                          position);
+
+                                              await ar.submitAttendance("1",
+                                                  latitude, longitude, address);
+                                              LocationController.i
+                                                  .updateisOutLoading(false);
+                                            } catch (e) {
+                                              LocationController.i
+                                                  .updateisOutLoading(false);
+                                            }
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                ColorManager.kOrangeColor,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                          ),
+                                          child: cont.isOutLoading
+                                              ? Shimmer.fromColors(
+                                                  baseColor:
+                                                      Colors.grey.shade300,
+                                                  highlightColor:
+                                                      Colors.grey.shade500,
+                                                  child: Text(
+                                                    'CHECK-OUT',
+                                                    style: GoogleFonts.poppins(
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  ),
+                                                )
+                                              : Text(
+                                                  'CHECK-OUT',
+                                                  style: GoogleFonts.poppins(
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                        );
+                                      }),
                                     ],
                                   )
                                 ],
@@ -420,10 +549,30 @@ class Dashboard extends StatelessWidget {
                           ),
                         ),
                         SizedBox(
+                          // height: Get.height * 0.01,
                           width: actualWidthDP * 0.02,
                         ),
-                        SizedBox(
-                          height: actualHeightDP * 0.02,
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: Get.width * 0.03,
+                              vertical: Get.height * 0.015),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Attendance',
+                                style: GoogleFonts.poppins(
+                                    color: ColorManager.kOrangeColor,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                DateFormat('MMMM d, y').format(DateTime.now()),
+                                style: GoogleFonts.poppins(
+                                    fontSize: 12, color: Colors.grey.shade600),
+                              ),
+                            ],
+                          ),
                         ),
                         Row(
                           children: [

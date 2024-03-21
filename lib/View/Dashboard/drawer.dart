@@ -16,15 +16,12 @@ class _DrawerScreenState extends State<DrawerScreen> {
   Widget build(BuildContext context) {
     return ZoomDrawer(
         dragOffset: 40,
-        // controller: ProfileController.i.zoomDrawerController,
         showShadow: true,
         shadowLayer2Color: ColorManager.kbackgroundcolor,
         menuBackgroundColor: const Color(0xffFFC700),
         angle: 0,
         slideWidth: 300,
-        // drawerShadowsBackgroundColor: Colors.transparent,
         menuScreen: const MenuScreen(),
-        // ),
         mainScreen: Dashboard());
   }
 }

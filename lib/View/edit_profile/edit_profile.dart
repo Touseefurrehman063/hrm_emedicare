@@ -73,7 +73,7 @@ class EditProfile extends StatelessWidget {
                                       image: NetworkImage(baseURL +
                                           AuthController
                                               .i.userProfile?.picturePath),
-                                      fit: BoxFit.fill)
+                                      fit: BoxFit.cover)
                                   : const DecorationImage(
                                       image: AssetImage(Images.user))),
                       child: Align(

@@ -23,11 +23,11 @@ class HistoryVisitCard extends StatelessWidget {
         ),
         child: GetBuilder<VisitOutsideController>(builder: (context) {
           return Padding(
-            padding: EdgeInsets.symmetric(horizontal: Get.width * 0.04),
+            padding: EdgeInsets.symmetric(horizontal: Get.width * 0.03),
             child: Column(
               children: [
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: Get.height * 0.03),
+                  padding: EdgeInsets.symmetric(vertical: Get.height * 0.015),
                   child: Container(
                     decoration: BoxDecoration(
                       color: ColorManager.kWhiteColor,
@@ -35,7 +35,7 @@ class HistoryVisitCard extends StatelessWidget {
                     ),
                     child: Padding(
                       padding: EdgeInsets.symmetric(
-                          horizontal: Get.width * 0.05,
+                          horizontal: Get.width * 0.02,
                           vertical: Get.height * 0.02),
                       child: Column(
                         children: [
@@ -229,26 +229,31 @@ class HistoryVisitCard extends StatelessWidget {
                                       endIndent: 03,
                                       color: ColorManager.kGreyColor,
                                     ),
-                                    Column(
-                                      children: [
-                                        Text(
-                                          "totaldays".tr,
-                                          style: GoogleFonts.poppins(
-                                            color: ColorManager.kGreyColor,
-                                            fontSize: 15.h,
+                                    SizedBox(
+                                      width: Get.width * 0.2,
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            "totaldays".tr,
+                                            maxLines: 1,
+                                            style: GoogleFonts.poppins(
+                                              color: ColorManager.kGreyColor,
+                                              fontSize: 15.h,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                        ),
-                                        SizedBox(
-                                          height: 05.h,
-                                        ),
-                                        Text(
-                                          "1 Day",
-                                          style: GoogleFonts.poppins(
-                                            color: ColorManager.kblackColor,
-                                            fontSize: 15.h,
+                                          SizedBox(
+                                            height: 05.h,
                                           ),
-                                        ),
-                                      ],
+                                          Text(
+                                            "1 Day",
+                                            style: GoogleFonts.poppins(
+                                              color: ColorManager.kblackColor,
+                                              fontSize: 15.h,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),

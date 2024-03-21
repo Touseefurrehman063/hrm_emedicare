@@ -5,9 +5,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hrm_emedicare/data/controller/leave_controller/leave_controller.dart';
 import 'package:hrm_emedicare/helper/colormanager/color_manager.dart';
 import 'package:intl/intl.dart';
+import 'package:shimmer/shimmer.dart';
 
 // ignore: must_be_immutable
-class LeaveStatusCard extends StatelessWidget {
+class LeaveStatusCard extends StatefulWidget {
   Color trailingcolor;
   String text;
   int i = 0;
@@ -17,6 +18,11 @@ class LeaveStatusCard extends StatelessWidget {
       required this.text,
       required this.i});
 
+  @override
+  State<LeaveStatusCard> createState() => _LeaveStatusCardState();
+}
+
+class _LeaveStatusCardState extends State<LeaveStatusCard> {
   String formattedDate(String? date) {
     if (date != null) {
       final parsedDate = DateTime.tryParse(date);
@@ -32,8 +38,8 @@ class LeaveStatusCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 06),
       child: GetBuilder<LeaveController>(builder: (cont) {
-        String leaveType =
-            cont.leavestatus?.table?[i].leaveType ?? ""; // Get the leave type
+        String leaveType = cont.leavestatus?.table?[widget.i].leaveType ??
+            ""; // Get the leave type
 
         Color containerColor;
 
@@ -61,292 +67,631 @@ class LeaveStatusCard extends StatelessWidget {
             color: containerColor,
             borderRadius: BorderRadius.circular(20),
           ),
-          child: GetBuilder<LeaveController>(builder: (context) {
-            return Padding(
-              padding: EdgeInsets.symmetric(horizontal: Get.width * 0.025),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: Get.height * 0.015),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: ColorManager.kWhiteColor,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: Get.width * 0.02,
-                            vertical: Get.height * 0.02),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "date".tr,
-                                  style: GoogleFonts.poppins(
-                                      color: ColorManager.kblackColor,
-                                      fontSize: 14.h,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                // SizedBox(
-                                //   height: 05.h,
-                                // ),
-                                Text(
-                                  formattedDate(
-                                      cont.leavestatus?.table?[i].applyDate),
-                                  style: GoogleFonts.poppins(
-                                    color: ColorManager.kblackColor,
-                                    fontSize: 14.h,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "forwardedtoo".tr,
-                                  style: GoogleFonts.poppins(
-                                      color: ColorManager.kblackColor,
-                                      fontSize: 14.h,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                // SizedBox(
-                                //   height: 05.h,
-                                // ),
-                                SizedBox(
-                                  width: Get.width * 0.26,
-                                  child: Text(
-                                    cont.leavestatus?.table?[i]
-                                            .lineManagerName ??
-                                        "-",
-                                    style: GoogleFonts.poppins(
-                                      color: ColorManager.kblackColor,
-                                      fontSize: 14.h,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                const Spacer(),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: Get.height * 0.01,
-                                      vertical: Get.width * 0.01),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(8),
-                                    color: trailingcolor,
-                                  ),
-                                  child: Center(
-                                      child: Text(
-                                    text,
-                                    style: GoogleFonts.poppins(
-                                      color: ColorManager.kWhiteColor,
-                                      fontSize: 15.h,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )),
-                                )
-                              ],
-                            ),
-                            const Divider(
-                              color: ColorManager.kGreyColor,
-                              thickness: 1,
-                              indent: 5,
-                              endIndent: 5,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "leavetype".tr,
-                                  style: GoogleFonts.poppins(
-                                      color: ColorManager.kblackColor,
-                                      fontSize: 14.h,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                SizedBox(
-                                  width: 01.w,
-                                ),
-                                Text(
-                                  cont.leavestatus?.table?[i].leaveType ?? "",
-                                  style: GoogleFonts.poppins(
-                                    color: ColorManager.kblackColor,
-                                    fontSize: 14.h,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: Get.height * 0.02,
-                            ),
-                            Column(
-                              children: [
-                                IntrinsicHeight(
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Column(
-                                        children: [
-                                          Text(
-                                            "fromdate".tr,
-                                            style: GoogleFonts.poppins(
-                                              color: ColorManager.kGreyColor,
-                                              fontSize: 15.h,
-                                            ),
+          child: GetBuilder<LeaveController>(builder: (cont) {
+            return cont.isLeaveLoading == true
+                ? Shimmer.fromColors(
+                    baseColor: Colors.grey.shade300,
+                    highlightColor: Colors.grey.shade500,
+                    enabled: LeaveController.i.isLeaveLoading,
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: Get.width * 0.025),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: Get.height * 0.015),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: ColorManager.kWhiteColor,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: Get.width * 0.02,
+                                    vertical: Get.height * 0.02),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "date".tr,
+                                          style: GoogleFonts.poppins(
+                                              color: ColorManager.kblackColor,
+                                              fontSize: 14.h,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        Text(
+                                          formattedDate(cont.leavestatus
+                                              ?.table?[widget.i].applyDate),
+                                          style: GoogleFonts.poppins(
+                                            color: ColorManager.kblackColor,
+                                            fontSize: 14.h,
                                           ),
-                                          SizedBox(
-                                            height: 05.h,
-                                          ),
-                                          Text(
-                                            formattedDate(cont.leavestatus
-                                                ?.table?[i].leaveFrom),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "forwardedtoo".tr,
+                                          style: GoogleFonts.poppins(
+                                              color: ColorManager.kblackColor,
+                                              fontSize: 14.h,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(
+                                          width: Get.width * 0.26,
+                                          child: Text(
+                                            cont.leavestatus?.table?[widget.i]
+                                                    .lineManagerName ??
+                                                "-",
                                             style: GoogleFonts.poppins(
                                               color: ColorManager.kblackColor,
-                                              fontSize: 15.h,
+                                              fontSize: 14.h,
                                             ),
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                        ],
-                                      ),
-                                      const VerticalDivider(
-                                        width: 20,
-                                        thickness: 1,
-                                        indent: 5,
-                                        endIndent: 03,
-                                        color: ColorManager.kGreyColor,
-                                      ),
-                                      Column(
-                                        children: [
-                                          Text(
-                                            "todate".tr,
+                                        ),
+                                        const Spacer(),
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: Get.height * 0.01,
+                                              vertical: Get.width * 0.01),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            color: widget.trailingcolor,
+                                          ),
+                                          child: Center(
+                                              child: Text(
+                                            widget.text,
                                             style: GoogleFonts.poppins(
-                                              color: ColorManager.kGreyColor,
+                                              color: ColorManager.kWhiteColor,
                                               fontSize: 15.h,
+                                              fontWeight: FontWeight.bold,
                                             ),
-                                          ),
-                                          SizedBox(
-                                            height: 05.h,
-                                          ),
-                                          Text(
-                                            formattedDate(cont.leavestatus
-                                                ?.table?[i].leaveTo),
-                                            style: GoogleFonts.poppins(
+                                          )),
+                                        )
+                                      ],
+                                    ),
+                                    const Divider(
+                                      color: ColorManager.kGreyColor,
+                                      thickness: 1,
+                                      indent: 5,
+                                      endIndent: 5,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "leavetype".tr,
+                                          style: GoogleFonts.poppins(
                                               color: ColorManager.kblackColor,
-                                              fontSize: 15.h,
-                                            ),
+                                              fontSize: 14.h,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(
+                                          width: 01.w,
+                                        ),
+                                        Text(
+                                          cont.leavestatus?.table?[widget.i]
+                                                  .leaveType ??
+                                              "",
+                                          style: GoogleFonts.poppins(
+                                            color: ColorManager.kblackColor,
+                                            fontSize: 14.h,
                                           ),
-                                        ],
-                                      ),
-                                      const VerticalDivider(
-                                        width: 20,
-                                        thickness: 1,
-                                        indent: 5,
-                                        endIndent: 03,
-                                        color: ColorManager.kGreyColor,
-                                      ),
-                                      Column(
-                                        children: [
-                                          SizedBox(
-                                            width: Get.width * 0.2,
-                                            child: Text(
-                                              "totaldays".tr,
-                                              maxLines: 1,
-                                              style: GoogleFonts.poppins(
-                                                color: ColorManager.kGreyColor,
-                                                fontSize: 15.h,
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: Get.height * 0.02,
+                                    ),
+                                    Column(
+                                      children: [
+                                        IntrinsicHeight(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              Column(
+                                                children: [
+                                                  Text(
+                                                    "fromdate".tr,
+                                                    style: GoogleFonts.poppins(
+                                                      color: ColorManager
+                                                          .kGreyColor,
+                                                      fontSize: 15.h,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 05.h,
+                                                  ),
+                                                  Text(
+                                                    formattedDate(cont
+                                                        .leavestatus
+                                                        ?.table?[widget.i]
+                                                        .leaveFrom),
+                                                    style: GoogleFonts.poppins(
+                                                      color: ColorManager
+                                                          .kblackColor,
+                                                      fontSize: 15.h,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                              overflow: TextOverflow.ellipsis,
+                                              const VerticalDivider(
+                                                width: 20,
+                                                thickness: 1,
+                                                indent: 5,
+                                                endIndent: 03,
+                                                color: ColorManager.kGreyColor,
+                                              ),
+                                              Column(
+                                                children: [
+                                                  Text(
+                                                    "todate".tr,
+                                                    style: GoogleFonts.poppins(
+                                                      color: ColorManager
+                                                          .kGreyColor,
+                                                      fontSize: 15.h,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 05.h,
+                                                  ),
+                                                  Text(
+                                                    formattedDate(cont
+                                                        .leavestatus
+                                                        ?.table?[widget.i]
+                                                        .leaveTo),
+                                                    style: GoogleFonts.poppins(
+                                                      color: ColorManager
+                                                          .kblackColor,
+                                                      fontSize: 15.h,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              const VerticalDivider(
+                                                width: 20,
+                                                thickness: 1,
+                                                indent: 5,
+                                                endIndent: 03,
+                                                color: ColorManager.kGreyColor,
+                                              ),
+                                              Column(
+                                                children: [
+                                                  SizedBox(
+                                                    width: Get.width * 0.2,
+                                                    child: Text(
+                                                      "totaldays".tr,
+                                                      maxLines: 1,
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                        color: ColorManager
+                                                            .kGreyColor,
+                                                        fontSize: 15.h,
+                                                      ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    height: 05.h,
+                                                  ),
+                                                  Text(
+                                                    " ${cont.leavestatus?.table?[widget.i].numberOfDays?.toString().split(".")[0]} Days",
+                                                    style: GoogleFonts.poppins(
+                                                      color: ColorManager
+                                                          .kblackColor,
+                                                      fontSize: 15.h,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const Divider(
+                                          color: ColorManager.kGreyColor,
+                                          thickness: 1,
+                                          indent: 5,
+                                          endIndent: 5,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "titlee".tr,
+                                              style: GoogleFonts.poppins(
+                                                  color:
+                                                      ColorManager.kblackColor,
+                                                  fontSize: 14.h,
+                                                  fontWeight: FontWeight.bold),
                                             ),
+                                            SizedBox(
+                                              width: 01.w,
+                                            ),
+                                            SizedBox(
+                                              width: Get.width * 0.6,
+                                              child: Text(
+                                                cont
+                                                        .leavestatus
+                                                        ?.table?[widget.i]
+                                                        .title ??
+                                                    "-",
+                                                style: GoogleFonts.poppins(
+                                                  color:
+                                                      ColorManager.kblackColor,
+                                                  fontSize: 14.h,
+                                                ),
+                                                softWrap: true,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "descript".tr,
+                                              style: GoogleFonts.poppins(
+                                                  color:
+                                                      ColorManager.kblackColor,
+                                                  fontSize: 14.h,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            SizedBox(
+                                              width: 01.w,
+                                            ),
+                                            SizedBox(
+                                              width: Get.width * 0.5,
+                                              child: Text(
+                                                cont
+                                                        .leavestatus
+                                                        ?.table?[widget.i]
+                                                        .description ??
+                                                    "-",
+                                                style: GoogleFonts.poppins(
+                                                  color:
+                                                      ColorManager.kblackColor,
+                                                  fontSize: 14.h,
+                                                ),
+                                                softWrap: true,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                : Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: Get.width * 0.025),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: Get.height * 0.015),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: ColorManager.kWhiteColor,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: Get.width * 0.02,
+                                  vertical: Get.height * 0.02),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "date".tr,
+                                        style: GoogleFonts.poppins(
+                                            color: ColorManager.kblackColor,
+                                            fontSize: 14.h,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      // SizedBox(
+                                      //   height: 05.h,
+                                      // ),
+                                      Text(
+                                        formattedDate(cont.leavestatus
+                                            ?.table?[widget.i].applyDate),
+                                        style: GoogleFonts.poppins(
+                                          color: ColorManager.kblackColor,
+                                          fontSize: 14.h,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "forwardedtoo".tr,
+                                        style: GoogleFonts.poppins(
+                                            color: ColorManager.kblackColor,
+                                            fontSize: 14.h,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      // SizedBox(
+                                      //   height: 05.h,
+                                      // ),
+                                      SizedBox(
+                                        width: Get.width * 0.26,
+                                        child: Text(
+                                          cont.leavestatus?.table?[widget.i]
+                                                  .lineManagerName ??
+                                              "-",
+                                          style: GoogleFonts.poppins(
+                                            color: ColorManager.kblackColor,
+                                            fontSize: 14.h,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      const Spacer(),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: Get.height * 0.01,
+                                            vertical: Get.width * 0.01),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          color: widget.trailingcolor,
+                                        ),
+                                        child: Center(
+                                            child: Text(
+                                          widget.text,
+                                          style: GoogleFonts.poppins(
+                                            color: ColorManager.kWhiteColor,
+                                            fontSize: 15.h,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        )),
+                                      )
+                                    ],
+                                  ),
+                                  const Divider(
+                                    color: ColorManager.kGreyColor,
+                                    thickness: 1,
+                                    indent: 5,
+                                    endIndent: 5,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "leavetype".tr,
+                                        style: GoogleFonts.poppins(
+                                            color: ColorManager.kblackColor,
+                                            fontSize: 14.h,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      SizedBox(
+                                        width: 01.w,
+                                      ),
+                                      Text(
+                                        cont.leavestatus?.table?[widget.i]
+                                                .leaveType ??
+                                            "",
+                                        style: GoogleFonts.poppins(
+                                          color: ColorManager.kblackColor,
+                                          fontSize: 14.h,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: Get.height * 0.02,
+                                  ),
+                                  Column(
+                                    children: [
+                                      IntrinsicHeight(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            Column(
+                                              children: [
+                                                Text(
+                                                  "fromdate".tr,
+                                                  style: GoogleFonts.poppins(
+                                                    color:
+                                                        ColorManager.kGreyColor,
+                                                    fontSize: 15.h,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 05.h,
+                                                ),
+                                                Text(
+                                                  formattedDate(cont
+                                                      .leavestatus
+                                                      ?.table?[widget.i]
+                                                      .leaveFrom),
+                                                  style: GoogleFonts.poppins(
+                                                    color: ColorManager
+                                                        .kblackColor,
+                                                    fontSize: 15.h,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const VerticalDivider(
+                                              width: 20,
+                                              thickness: 1,
+                                              indent: 5,
+                                              endIndent: 03,
+                                              color: ColorManager.kGreyColor,
+                                            ),
+                                            Column(
+                                              children: [
+                                                Text(
+                                                  "todate".tr,
+                                                  style: GoogleFonts.poppins(
+                                                    color:
+                                                        ColorManager.kGreyColor,
+                                                    fontSize: 15.h,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 05.h,
+                                                ),
+                                                Text(
+                                                  formattedDate(cont
+                                                      .leavestatus
+                                                      ?.table?[widget.i]
+                                                      .leaveTo),
+                                                  style: GoogleFonts.poppins(
+                                                    color: ColorManager
+                                                        .kblackColor,
+                                                    fontSize: 15.h,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            const VerticalDivider(
+                                              width: 20,
+                                              thickness: 1,
+                                              indent: 5,
+                                              endIndent: 03,
+                                              color: ColorManager.kGreyColor,
+                                            ),
+                                            Column(
+                                              children: [
+                                                SizedBox(
+                                                  width: Get.width * 0.2,
+                                                  child: Text(
+                                                    "totaldays".tr,
+                                                    maxLines: 1,
+                                                    style: GoogleFonts.poppins(
+                                                      color: ColorManager
+                                                          .kGreyColor,
+                                                      fontSize: 15.h,
+                                                    ),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  height: 05.h,
+                                                ),
+                                                Text(
+                                                  " ${cont.leavestatus?.table?[widget.i].numberOfDays?.toString().split(".")[0]} Days",
+                                                  style: GoogleFonts.poppins(
+                                                    color: ColorManager
+                                                        .kblackColor,
+                                                    fontSize: 15.h,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const Divider(
+                                        color: ColorManager.kGreyColor,
+                                        thickness: 1,
+                                        indent: 5,
+                                        endIndent: 5,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "titlee".tr,
+                                            style: GoogleFonts.poppins(
+                                                color: ColorManager.kblackColor,
+                                                fontSize: 14.h,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                           SizedBox(
-                                            height: 05.h,
+                                            width: 01.w,
                                           ),
+                                          SizedBox(
+                                            width: Get.width * 0.6,
+                                            child: Text(
+                                              cont.leavestatus?.table?[widget.i]
+                                                      .title ??
+                                                  "-",
+                                              style: GoogleFonts.poppins(
+                                                color: ColorManager.kblackColor,
+                                                fontSize: 14.h,
+                                              ),
+                                              softWrap: true,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
                                           Text(
-                                            " ${cont.leavestatus?.table?[i].numberOfDays?.toString().split(".")[0]} Days",
+                                            "descript".tr,
                                             style: GoogleFonts.poppins(
-                                              color: ColorManager.kblackColor,
-                                              fontSize: 15.h,
+                                                color: ColorManager.kblackColor,
+                                                fontSize: 14.h,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          SizedBox(
+                                            width: 01.w,
+                                          ),
+                                          SizedBox(
+                                            width: Get.width * 0.5,
+                                            child: Text(
+                                              cont.leavestatus?.table?[widget.i]
+                                                      .description ??
+                                                  "-",
+                                              style: GoogleFonts.poppins(
+                                                color: ColorManager.kblackColor,
+                                                fontSize: 14.h,
+                                              ),
+                                              softWrap: true,
                                             ),
                                           ),
                                         ],
                                       ),
                                     ],
-                                  ),
-                                ),
-                                const Divider(
-                                  color: ColorManager.kGreyColor,
-                                  thickness: 1,
-                                  indent: 5,
-                                  endIndent: 5,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "titlee".tr,
-                                      style: GoogleFonts.poppins(
-                                          color: ColorManager.kblackColor,
-                                          fontSize: 14.h,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(
-                                      width: 01.w,
-                                    ),
-                                    SizedBox(
-                                      width: Get.width * 0.6,
-                                      child: Text(
-                                        cont.leavestatus?.table?[i].title ??
-                                            "-",
-                                        style: GoogleFonts.poppins(
-                                          color: ColorManager.kblackColor,
-                                          fontSize: 14.h,
-                                        ),
-                                        softWrap: true,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "descript".tr,
-                                      style: GoogleFonts.poppins(
-                                          color: ColorManager.kblackColor,
-                                          fontSize: 14.h,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(
-                                      width: 01.w,
-                                    ),
-                                    SizedBox(
-                                      width: Get.width * 0.5,
-                                      child: Text(
-                                        cont.leavestatus?.table?[i]
-                                                .description ??
-                                            "-",
-                                        style: GoogleFonts.poppins(
-                                          color: ColorManager.kblackColor,
-                                          fontSize: 14.h,
-                                        ),
-                                        softWrap: true,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
                     ),
-                  )
-                ],
-              ),
-            );
+                  );
           }),
         );
       }),

@@ -277,19 +277,18 @@ class TodayVisit extends StatelessWidget {
             SizedBox(
               height: Get.height * 0.05,
             ),
-            GetBuilder<AuthController>(builder: (contr) {
-              return AuthTextField(
-                label: Text(
-                  "discription".tr,
-                  style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: ColorManager.kblackColor),
-                ),
-                controller: contr.titleController,
-                maxLines: 8,
-              );
-            }),
+            AuthTextField(
+              visitoutside: true,
+              label: Text(
+                "discription".tr,
+                style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                    color: ColorManager.kblackColor),
+              ),
+              controller: cont.titleController,
+              maxLines: 8,
+            ),
             SizedBox(
               height: Get.height * 0.04,
             ),

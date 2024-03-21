@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hrm_emedicare/View/attendance/attendancehistory.dart';
 import 'package:hrm_emedicare/View/attendance/todayattendance.dart';
 import 'package:hrm_emedicare/components/customnavbar.dart';
 import 'package:hrm_emedicare/data/controller/attendence_controller/attendancecontroller.dart';
@@ -12,21 +13,9 @@ import 'package:hrm_emedicare/helper/routerclass/myrouter.dart';
 // ignore: must_be_immutable
 class Attendancescreen extends StatelessWidget {
   Attendancescreen({super.key});
-// late final CustomSegmentedController<int> controller;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     controller = CustomSegmentedController();
-//     controller.addListener(() {
-//       print('listener ${controller.value}');
-//     });
-//   }
-
+  final cnt = Get.put(Attendancecontroller());
   @override
   Widget build(BuildContext context) {
-    final cnt = Get.put(Attendancecontroller());
-    Attendancecontroller.i.gettodayattendence();
     return Scaffold(
       bottomNavigationBar: Customnavbar(
         index: 2,
@@ -35,6 +24,7 @@ class Attendancescreen extends StatelessWidget {
       appBar: AppBar(
         leading: InkWell(
           onTap: () {
+            Attendancecontroller.i.updateindex(0);
             Get.offAndToNamed(
               Myrouting.home,
             );
@@ -68,29 +58,28 @@ class Attendancescreen extends StatelessWidget {
               height: Get.height * 0.06,
               innerPadding: EdgeInsets.zero,
               children: {
-                0: Text("today".tr),
-                1: Text("history".tr),
+                0: Text(
+                  "today".tr,
+                  style: GoogleFonts.poppins(
+                    color: cnt.index == 0
+                        ? Colors.white
+                        : ColorManager.kblackColor,
+                  ),
+                ),
+                1: Text(
+                  "history".tr,
+                  style: GoogleFonts.poppins(
+                    color: cnt.index == 1
+                        ? Colors.white
+                        : ColorManager.kblackColor,
+                  ),
+                ),
               },
               decoration: BoxDecoration(
                 color: Colors.grey[200],
                 borderRadius: BorderRadius.circular(20),
               ),
-              // padding: 10,
               thumbDecoration: BoxDecoration(
-                boxShadow: const [
-                  BoxShadow(
-                    offset: Offset(1, 1),
-                    color: ColorManager.kGreyColor,
-                    spreadRadius: 1,
-                    blurRadius: 1,
-                  ),
-                  BoxShadow(
-                    offset: Offset(-1, -1),
-                    spreadRadius: 1,
-                    blurRadius: 1,
-                    color: ColorManager.kGreyColor,
-                  )
-                ],
                 borderRadius:
                     cnt.index == 0 ? cnt.dynamicBorder : cnt.rightborder,
                 gradient: const LinearGradient(
@@ -99,7 +88,6 @@ class Attendancescreen extends StatelessWidget {
                   colors: [
                     Color(0xffF38020),
                     Color(0xffF38020),
-                    // Color(0xffe1306c),
                   ],
                 ),
               ),
@@ -119,6 +107,6 @@ class Attendancescreen extends StatelessWidget {
 
   List<Widget> pages = [
     const Todayattandence(),
-    const Todayattandence(),
+    const Attendancehistory(),
   ];
 }

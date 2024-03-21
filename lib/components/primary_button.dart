@@ -15,7 +15,7 @@ class PrimaryButton extends StatelessWidget {
   final double? width;
   final Color color;
   final Color textcolor;
-  final String title;
+  final String? title;
   final double? fontSize;
   final VoidCallback onPressed;
   final Widget? icon;
@@ -25,7 +25,7 @@ class PrimaryButton extends StatelessWidget {
       {Key? key,
       this.height = 50,
       this.margin,
-      required this.title,
+      this.title,
       required this.onPressed,
       required this.color,
       required this.textcolor,
@@ -64,15 +64,16 @@ class PrimaryButton extends StatelessWidget {
                   width: 8,
                 ),
                 Center(
-                    child: Text(
-                  title,
-                  style: GoogleFonts.poppins(
-                    fontSize: fontSize,
-                    color: textcolor,
-                    fontWeight: fontweight,
-                  ),
-                  textAlign: TextAlign.center,
-                )),
+                    child: textWidget ??
+                        Text(
+                          title ?? "",
+                          style: GoogleFonts.poppins(
+                            fontSize: fontSize,
+                            color: textcolor,
+                            fontWeight: fontweight,
+                          ),
+                          textAlign: TextAlign.center,
+                        )),
               ],
             )),
       );

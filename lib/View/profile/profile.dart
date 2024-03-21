@@ -6,12 +6,34 @@ import 'package:hrm_emedicare/View/edit_profile/edit_profile.dart';
 import 'package:hrm_emedicare/components/Images/Images.dart';
 import 'package:hrm_emedicare/components/customnavbar.dart';
 import 'package:hrm_emedicare/data/controller/auth_controller/auth_controller.dart';
+import 'package:hrm_emedicare/data/localdb/localdb.dart';
 import 'package:hrm_emedicare/helper/colormanager/color_manager.dart';
 import 'package:hrm_emedicare/helper/routerclass/myrouter.dart';
 import 'package:hrm_emedicare/utils/constants/constants.dart';
 
-class Userprofile extends StatelessWidget {
+class Userprofile extends StatefulWidget {
   const Userprofile({super.key});
+
+  @override
+  State<Userprofile> createState() => _UserprofileState();
+}
+
+class _UserprofileState extends State<Userprofile> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getImagePath();
+  }
+
+  String? imagepath;
+  String username = "";
+  String designation = "";
+  void getImagePath() async {
+    imagepath = await Prefs().getImagePath() ?? "";
+    username = await Prefs().getusername() ?? "";
+    designation = await Prefs().getUserDesignation() ?? "";
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,33 +77,51 @@ class Userprofile extends StatelessWidget {
                 return Column(
                   children: [
                     SizedBox(height: Get.height * 0.01),
-                    Align(
-                      alignment: Alignment.center,
-                      child: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        radius: 60,
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                          ),
-                          child: ClipRRect(
-                              borderRadius: BorderRadius.circular(60),
-                              child:
-                                  AuthController.i.userProfile?.picturePath !=
-                                          null
-                                      ? Image.network(
-                                          baseURL +
-                                              AuthController
-                                                  .i.userProfile?.picturePath,
-                                          height: Get.height * 0.19,
-                                          fit: BoxFit.fill,
-                                        )
-                                      : Image.asset(
-                                          Images.temppicture,
-                                          height: Get.height * 0.19,
-                                        )),
-                        ),
-                      ),
+                    // Align(
+                    //   alignment: Alignment.center,
+                    //   child: CircleAvatar(
+                    //     backgroundColor: Colors.white,
+                    //     radius: 60,
+                    //     child: Container(
+                    //       decoration: const BoxDecoration(
+                    //         shape: BoxShape.circle,
+                    //       ),
+                    //       child: ClipRRect(
+                    //           borderRadius: BorderRadius.circular(60),
+                    //           child:
+                    //               AuthController.i.userProfile?.picturePath !=
+                    //                       null
+                    //                   ? Image.network(
+                    //                       baseURL +
+                    //                           AuthController
+                    //                               .i.userProfile?.picturePath,
+                    //                       height: Get.height * 0.19,
+                    //                       fit: BoxFit.fill,
+                    //                     )
+                    //                   : Image.asset(
+                    //                       Images.temppicture,
+                    //                       height: Get.height * 0.19,
+                    //                     )),
+                    //     ),
+                    //   ),
+                    // ),
+                    Container(
+                      decoration: const BoxDecoration(shape: BoxShape.circle),
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(60),
+                          child: AuthController.i.userProfile?.picturePath !=
+                                  null
+                              ? Image.network(
+                                  baseURL +
+                                      AuthController.i.userProfile?.picturePath,
+                                  height: Get.height * 0.14,
+                                  width: Get.width * 0.3,
+                                  fit: BoxFit.cover,
+                                )
+                              : Image.asset(
+                                  Images.temppicture,
+                                  height: Get.height * 0.07,
+                                )),
                     ),
                     SizedBox(
                       height: 10.h,
@@ -139,179 +179,196 @@ class Userprofile extends StatelessWidget {
                         child: Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: Get.width * 0.02),
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: 20.h,
-                              ),
-                              Container(
-                                padding: const EdgeInsets.all(10),
-                                width: Get.width * 0.93,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: ColorManager.kgreencolorstatus),
-                                child: Center(
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 20.h,
+                                ),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: Get.height * 0.01),
+                                  width: Get.width * 0.93,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: ColorManager.kgreencolorstatus),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
-                                      Text(
-                                        "address".tr,
-                                        style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.bold,
-                                          color: ColorManager.kWhiteColor,
+                                      Flexible(
+                                        child: Text(
+                                          "address".tr,
+                                          style: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.bold,
+                                            color: ColorManager.kWhiteColor,
+                                          ),
                                         ),
                                       ),
-                                      Expanded(
+                                      Flexible(
                                         child: Text(
                                           cont.userProfile?.address ?? "",
-                                          // "qqsdjdjkadkjasjkbdjksabdjkbasjkbdjkasbdjkbsajk",
                                           style: GoogleFonts.poppins(
                                               color: ColorManager.kWhiteColor,
                                               fontSize: 12),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
                                     ],
                                   ),
                                 ),
-                              ),
-                              SizedBox(
-                                height: Get.height * 0.02,
-                              ),
-                              Container(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 30),
-                                width: Get.width * 0.93,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: ColorManager.kbackgroundcolor),
-                                child: IntrinsicHeight(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          Text(
-                                            "dob".tr,
-                                            style: GoogleFonts.poppins(
-                                                color: ColorManager.kWhiteColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 12),
-                                          ),
-                                          SizedBox(
-                                            height: Get.height * 0.01,
-                                          ),
-                                          Text(
-                                            "${AuthController.i.formattedDate(AuthController.i.userProfile?.dateOfBirth?.split("T")[0] ?? "")}",
-                                            style: GoogleFonts.poppins(
-                                                color: ColorManager.kWhiteColor,
-                                                fontSize: 12),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        width: Get.width * 0.01,
-                                      ),
-                                      const VerticalDivider(
-                                        width: 15,
-                                        thickness: 1.5,
-                                        indent: 1,
-                                        endIndent: 1,
-                                        color: ColorManager.kWhiteColor,
-                                      ),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            "contactno".tr,
-                                            style: GoogleFonts.poppins(
-                                                color: ColorManager.kWhiteColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 12),
-                                          ),
-                                          SizedBox(
-                                            height: Get.height * 0.01,
-                                          ),
-                                          Text(
-                                            cont.userProfile?.cellNumber ?? "",
-                                            style: GoogleFonts.poppins(
-                                                color: ColorManager.kWhiteColor,
-                                                fontSize: 12),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        width: Get.width * 0.01,
-                                      ),
-                                      const VerticalDivider(
-                                        width: 20,
-                                        thickness: 1.5,
-                                        indent: 1,
-                                        endIndent: 1,
-                                        color: ColorManager.kWhiteColor,
-                                      ),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Text(
-                                            "nationality".tr,
-                                            style: GoogleFonts.poppins(
-                                                color: ColorManager.kWhiteColor,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 12),
-                                          ),
-                                          SizedBox(
-                                            height: Get.height * 0.01,
-                                          ),
-                                          Text(
-                                            cont.userProfile?.country ?? "",
-                                            style: GoogleFonts.poppins(
-                                              color: ColorManager.kWhiteColor,
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
+                                SizedBox(
+                                  height: Get.height * 0.02,
                                 ),
-                              ),
-                              SizedBox(
-                                height: Get.height * 0.02,
-                              ),
-                              Container(
-                                padding: const EdgeInsets.all(10),
-                                width: Get.width * 0.93,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: ColorManager.kgreencolorstatus),
-                                child: Center(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "email".tr,
-                                        style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.bold,
+                                Container(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 30),
+                                  width: Get.width * 0.93,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: ColorManager.kbackgroundcolor),
+                                  child: IntrinsicHeight(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            Text(
+                                              "dob".tr,
+                                              style: GoogleFonts.poppins(
+                                                  color:
+                                                      ColorManager.kWhiteColor,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12),
+                                            ),
+                                            SizedBox(
+                                              height: Get.height * 0.01,
+                                            ),
+                                            Text(
+                                              "${AuthController.i.formattedDate(AuthController.i.userProfile?.dateOfBirth?.split("T")[0] ?? "")}",
+                                              style: GoogleFonts.poppins(
+                                                  color:
+                                                      ColorManager.kWhiteColor,
+                                                  fontSize: 12),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          width: Get.width * 0.01,
+                                        ),
+                                        const VerticalDivider(
+                                          width: 15,
+                                          thickness: 1.5,
+                                          indent: 1,
+                                          endIndent: 1,
                                           color: ColorManager.kWhiteColor,
                                         ),
-                                      ),
-                                      Text(
-                                        cont.userProfile?.email ?? "",
-                                        style: GoogleFonts.poppins(
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "contactno".tr,
+                                              style: GoogleFonts.poppins(
+                                                  color:
+                                                      ColorManager.kWhiteColor,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12),
+                                            ),
+                                            SizedBox(
+                                              height: Get.height * 0.01,
+                                            ),
+                                            Text(
+                                              cont.userProfile?.cellNumber ??
+                                                  "",
+                                              style: GoogleFonts.poppins(
+                                                  color:
+                                                      ColorManager.kWhiteColor,
+                                                  fontSize: 12),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          width: Get.width * 0.01,
+                                        ),
+                                        const VerticalDivider(
+                                          width: 20,
+                                          thickness: 1.5,
+                                          indent: 1,
+                                          endIndent: 1,
+                                          color: ColorManager.kWhiteColor,
+                                        ),
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              "nationality".tr,
+                                              style: GoogleFonts.poppins(
+                                                  color:
+                                                      ColorManager.kWhiteColor,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12),
+                                            ),
+                                            SizedBox(
+                                              height: Get.height * 0.01,
+                                            ),
+                                            Text(
+                                              cont.userProfile?.country ?? "",
+                                              style: GoogleFonts.poppins(
+                                                color: ColorManager.kWhiteColor,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: Get.height * 0.02,
+                                ),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: Get.height * 0.01),
+                                  width: Get.width * 0.93,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: ColorManager.kgreencolorstatus),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          "email".tr,
+                                          style: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.bold,
                                             color: ColorManager.kWhiteColor,
-                                            fontSize: 12),
+                                          ),
+                                        ),
+                                      ),
+                                      Flexible(
+                                        child: Text(
+                                          cont.userProfile?.email ?? "",
+                                          style: GoogleFonts.poppins(
+                                              color: ColorManager.kWhiteColor,
+                                              fontSize: 12),
+                                        ),
                                       ),
                                     ],
                                   ),
                                 ),
-                              ),
-                            ],
+                                SizedBox(
+                                  height: Get.height * 0.02,
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),

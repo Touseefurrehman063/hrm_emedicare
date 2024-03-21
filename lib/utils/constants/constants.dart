@@ -4,7 +4,7 @@ import 'package:get/get_utils/get_utils.dart';
 import 'package:hrm_emedicare/models/language_model/language_model.dart';
 
 String baseURL = 'http://hrmapi.e-mcs.org/';
-String contactnumber = '';
+String contactnumber = '+923418495820';
 
 class AppConstants {
   static const int maximumDataTobeFetched = 25;
@@ -14,6 +14,7 @@ class AppConstants {
   ];
 
   static String login = '$baseURL/api/account';
+  static String submitAttendance = '$baseURL/api/account/SubmitAttendance';
   static String getuserdetail = '$baseURL/api/account/GetUpdateProfileDetail';
   static String todayattendence = '$baseURL/api/account/GetAttendanceHistory';
   static String getdepartment = '$baseURL/api/Leave/GetDepartments';

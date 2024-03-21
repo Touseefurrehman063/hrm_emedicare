@@ -1,4 +1,4 @@
-package com.example.hrm_emedicare
+package com.techovative.hrm
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

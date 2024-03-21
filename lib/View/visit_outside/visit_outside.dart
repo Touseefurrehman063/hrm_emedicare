@@ -65,20 +65,20 @@ class VisitOustside extends StatelessWidget {
               ),
               // padding: 10,
               thumbDecoration: BoxDecoration(
-                boxShadow: const [
-                  BoxShadow(
-                    offset: Offset(1, 1),
-                    color: ColorManager.kGreyColor,
-                    spreadRadius: 1,
-                    blurRadius: 1,
-                  ),
-                  BoxShadow(
-                    offset: Offset(-1, -1),
-                    spreadRadius: 1,
-                    blurRadius: 1,
-                    color: ColorManager.kGreyColor,
-                  )
-                ],
+                // boxShadow: const [
+                //   BoxShadow(
+                //     offset: Offset(1, 1),
+                //     color: ColorManager.kGreyColor,
+                //     spreadRadius: 1,
+                //     blurRadius: 1,
+                //   ),
+                //   BoxShadow(
+                //     offset: Offset(-1, -1),
+                //     spreadRadius: 1,
+                //     blurRadius: 1,
+                //     color: ColorManager.kGreyColor,
+                //   )
+                // ],
                 borderRadius:
                     cnt.index == 0 ? cnt.dynamicBorder : cnt.rightborder,
                 gradient: const LinearGradient(

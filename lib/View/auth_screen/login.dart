@@ -1,6 +1,5 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,14 +17,15 @@ import 'package:hrm_emedicare/helper/colormanager/color_manager.dart';
 import 'package:hrm_emedicare/utils/class_toaster.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 // ignore: must_be_immutable
 class Login extends StatelessWidget {
+  Login({super.key});
+
   final _formKey = GlobalKey<FormState>();
 
-  Login({super.key});
   bool isfingerprintEnable = false;
+
   final LocalAuthentication auth = LocalAuthentication();
 
   call() async {
@@ -44,24 +44,16 @@ class Login extends StatelessWidget {
         if (isfingerprintEnable) {
           if (auth) {
             if (AuthController.i.userProfile?.id != null) {
-              // AuthRepo.login(username, userpassword, '');
               AuthController.i.getlogininformation(
                 username,
                 userpassword,
               );
-              // Fluttertoast.showToast(
-              //     msg: 'You are already Logged in',
-              //     toastLength: Toast.LENGTH_SHORT,
-              //     gravity: ToastGravity.BOTTOM,
-              //     timeInSecForIosWeb: 1,
-              //     backgroundColor: ColorManager.kRedColor,
-              //     textColor: ColorManager.kWhiteColor,
-              //     fontSize: 14.0);
               isfingerprintEnable = true;
             } else {
-              AuthController.i.updateIsloading(true);
-              await AuthRepo.login(username, userpassword, "devicetoken");
-              AuthController.i.updateIsloading(false);
+              AuthController.i.updateisloginbuttion(true);
+
+              await AuthRepo.login(username, userpassword);
+              AuthController.i.updateisloginbuttion(false);
             }
           }
         }
@@ -70,193 +62,198 @@ class Login extends StatelessWidget {
   }
 
   List<BiometricType> _availableBiometrics = [];
+
   getauth() async {
     _availableBiometrics = await auth.getAvailableBiometrics();
   }
 
   @override
   Widget build(BuildContext context) {
+    // var authcontroller = Get.put<AuthController>(AuthController());
     return GetBuilder<AuthController>(builder: (cnt) {
-      return BlurryModalProgressHUD(
-        inAsyncCall: AuthController.i.isloginbutton,
-        blurEffectIntensity: 4,
-        progressIndicator: const SpinKitSpinningLines(
-          color: ColorManager.kPrimaryColor,
-          size: 60,
-        ),
-        dismissible: false,
-        opacity: 0.4,
-        color: Theme.of(context).scaffoldBackgroundColor,
-        child: Scaffold(
-            resizeToAvoidBottomInset: false,
-            body: Form(
-              key: _formKey,
-              child: SafeArea(
-                  child: Stack(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
-                    child: SizedBox(
-                      height: Get.height,
-                      width: Get.width,
-                      child: SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: Get.height * 0.03,
-                            ),
-                            SizedBox(
-                              child: Center(
-                                child: Image.asset(
-                                  Images.logo,
-                                  height: Get.height * 0.06,
-                                ),
+      return Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: Form(
+            key: _formKey,
+            child: SafeArea(
+                child: Stack(
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
+                  child: SizedBox(
+                    height: Get.height,
+                    width: Get.width,
+                    child: SingleChildScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: Get.height * 0.03,
+                          ),
+                          SizedBox(
+                            child: Center(
+                              child: Image.asset(
+                                Images.logo,
+                                height: Get.height * 0.06,
                               ),
                             ),
-                            SizedBox(
-                              height: Get.height * 0.07,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Center(
+                          ),
+                          SizedBox(
+                            height: Get.height * 0.07,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Center(
+                                child: Text(
+                                  "login".tr,
+                                  style: GoogleFonts.poppins(
+                                    textStyle: GoogleFonts.poppins(
+                                        fontSize: 30,
+                                        color: ColorManager.kOrangeColor,
+                                        fontWeight: FontWeight.w900),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: Get.height * 0.04,
+                              ),
+                              Center(
+                                child: SizedBox(
+                                  width: Get.width * 0.55,
                                   child: Text(
-                                    "login".tr,
+                                    "enteryouruser".tr,
+                                    textAlign: TextAlign.center,
                                     style: GoogleFonts.poppins(
                                       textStyle: GoogleFonts.poppins(
-                                          fontSize: 30,
-                                          color: ColorManager.kOrangeColor,
-                                          fontWeight: FontWeight.w900),
+                                          fontSize: 12,
+                                          color: ColorManager.kblackColor,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                 ),
-                                SizedBox(
-                                  height: Get.height * 0.04,
-                                ),
-                                Center(
-                                  child: SizedBox(
-                                    width: Get.width * 0.55,
+                              ),
+                              SizedBox(
+                                height: Get.height * 0.04,
+                              ),
+                              AuthTextField(
+                                validator: (p0) {
+                                  if (p0!.isEmpty) {
+                                    return 'enterusername'.tr;
+                                  }
+                                  return null;
+                                },
+                                maxLines: 1,
+                                controller: cnt.emailController,
+                                hintText: 'username'.tr,
+                              ),
+                              SizedBox(
+                                height: Get.height * 0.01,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      Get.to(() => ForgotUsername());
+                                    },
                                     child: Text(
-                                      "enteryouruser".tr,
-                                      textAlign: TextAlign.center,
+                                      'forgetuser'.tr,
                                       style: GoogleFonts.poppins(
-                                        textStyle: GoogleFonts.poppins(
-                                            fontSize: 12,
-                                            color: ColorManager.kblackColor,
-                                            fontWeight: FontWeight.bold),
-                                      ),
+                                          fontSize: 12,
+                                          color: ColorManager.klightblack,
+                                          fontWeight: FontWeight.w600),
                                     ),
                                   ),
-                                ),
-
-                                SizedBox(
-                                  height: Get.height * 0.04,
-                                ),
-                                AuthTextField(
-                                  validator: (p0) {
-                                    if (p0!.isEmpty) {
-                                      return 'enterusername'.tr;
-                                    }
-                                    return null;
-                                  },
-                                  maxLines: 1,
-                                  controller: cnt.emailController,
-                                  hintText: 'username'.tr,
-                                ),
-                                SizedBox(
-                                  height: Get.height * 0.01,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        Get.to(() => ForgotUsername());
-                                      },
-                                      child: Text(
-                                        'forgetuser'.tr,
-                                        style: GoogleFonts.poppins(
-                                            fontSize: 12,
-                                            color: ColorManager.klightblack,
-                                            fontWeight: FontWeight.w600),
-                                      ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: Get.height * 0.03,
+                              ),
+                              AuthTextField(
+                                maxLines: 1,
+                                validator: (p0) {
+                                  if (p0!.isEmpty) {
+                                    return 'enterpassword'.tr;
+                                  }
+                                  return null;
+                                },
+                                obscureText: cnt.obsecure,
+                                suffixIcon: InkWell(
+                                    onTap: () {
+                                      cnt.updateobsecurepassword(!cnt.obsecure);
+                                    },
+                                    child: cnt.obsecure
+                                        ? const Icon(CupertinoIcons.eye_slash)
+                                        : const Icon(CupertinoIcons.eye)),
+                                controller: cnt.passwordController,
+                                hintText: 'password'.tr,
+                              ),
+                              SizedBox(
+                                height: Get.height * 0.01,
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      Get.to(() => ForgetPassword());
+                                    },
+                                    child: Text(
+                                      'forgetpass'.tr,
+                                      style: GoogleFonts.poppins(
+                                          fontSize: 12,
+                                          color: ColorManager.klightblack,
+                                          fontWeight: FontWeight.w600),
                                     ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: Get.height * 0.03,
-                                ),
-                                AuthTextField(
-                                  maxLines: 1,
-                                  validator: (p0) {
-                                    if (p0!.isEmpty) {
-                                      return 'enterpassword'.tr;
-                                    }
-                                    return null;
-                                  },
-                                  obscureText: cnt.obsecure,
-                                  suffixIcon: InkWell(
-                                      onTap: () {
-                                        cnt.updateobsecurepassword(
-                                            !cnt.obsecure);
-                                      },
-                                      child: cnt.obsecure
-                                          ? const Icon(CupertinoIcons.eye_slash)
-                                          : const Icon(CupertinoIcons.eye)),
-                                  controller: cnt.passwordController,
-                                  hintText: 'password'.tr,
-                                ),
-                                SizedBox(
-                                  height: Get.height * 0.01,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        Get.to(() => ForgetPassword());
-                                      },
-                                      child: Text(
-                                        'forgetpass'.tr,
-                                        style: GoogleFonts.poppins(
-                                            fontSize: 12,
-                                            color: ColorManager.klightblack,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: Get.height * 0.05,
-                                ),
-                                PrimaryButton(
-                                    title: 'login'.tr,
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: Get.height * 0.05,
+                              ),
+                              GetBuilder<AuthController>(builder: (cont) {
+                                return PrimaryButton(
+                                    // title: 'login'.tr,
+                                    textWidget: cont.isloginbutton == false
+                                        ? Text(
+                                            'login'.tr,
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 14,
+                                              color: ColorManager.kWhiteColor,
+                                              fontWeight: FontWeight.normal,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          )
+                                        : const CircularProgressIndicator(
+                                            color: ColorManager.kWhiteColor,
+                                          ),
                                     fontSize: 15,
                                     fontweight: FontWeight.bold,
                                     onPressed: () async {
                                       if (_formKey.currentState!.validate()) {
                                         FocusScope.of(context).unfocus();
+                                        cont.isloginbutton;
                                         try {
-                                          AuthController.i
-                                              .updateisloginbuttion(true);
+                                          cont.updateisloginbuttion(true);
+                                          await Future.delayed(
+                                              const Duration(seconds: 1));
                                           await Prefs().setusername(
                                               AuthController
                                                   .i.emailController.text);
                                           await Prefs().setpassword(
                                               AuthController
                                                   .i.passwordController.text);
-                                          AuthController.i.getlogininformation(
+                                          await AuthController.i
+                                              .getlogininformation(
                                             cnt.emailController.text,
                                             cnt.passwordController.text,
                                           );
-                                          AuthController.i
-                                              .updateisloginbuttion(false);
+                                          cont.updateisloginbuttion(false);
                                         } catch (e) {
-                                          AuthController.i
-                                              .updateisloginbuttion(false);
+                                          cont.updateisloginbuttion(false);
                                           log("$e");
                                           Showtoaster().classtoaster(
                                               e.toString(),
@@ -265,72 +262,56 @@ class Login extends StatelessWidget {
                                       }
                                     },
                                     color: ColorManager.kPrimaryColor,
-                                    textcolor: ColorManager.kWhiteColor),
-                                SizedBox(
-                                  height: Get.height * 0.02,
+                                    textcolor: ColorManager.kWhiteColor);
+                              }),
+                              SizedBox(
+                                height: Get.height * 0.02,
+                              ),
+                              Visibility(
+                                visible: cnt.fingerprint,
+                                child: SizedBox(
+                                  height: Get.height * 0.08,
+                                  child: Center(
+                                      child: InkWell(
+                                    onTap: () {
+                                      call();
+                                    },
+                                    child: Platform.isIOS &&
+                                            _availableBiometrics
+                                                .contains(BiometricType.face)
+                                        ? Image.asset(
+                                            Images.facelogin,
+                                            height: Get.height * 0.07,
+                                          )
+                                        : Image.asset(
+                                            Images.fingerprinticon,
+                                            height: Get.height * 0.07,
+                                          ),
+                                  )),
                                 ),
-                                Visibility(
-                                  visible: cnt.fingerprint,
-                                  child: SizedBox(
-                                    height: Get.height * 0.08,
-                                    child: Center(
-                                        child: InkWell(
-                                      onTap: () {
-                                        call();
-                                      },
-                                      child: Platform.isIOS &&
-                                              _availableBiometrics
-                                                  .contains(BiometricType.face)
-                                          ? Image.asset(
-                                              Images.facelogin,
-                                              height: Get.height * 0.07,
-                                            )
-                                          : Image.asset(
-                                              Images.fingerprinticon,
-                                              height: Get.height * 0.07,
-                                            ),
-                                    )),
-                                  ),
-                                ),
-                                // SizedBox(
-                                //   height: Get.height * 0.02,
-                                // ),
-                                // Visibility(
-                                //   visible: isfingerprintEnable,
-                                //   child: SizedBox(
-                                //     height: Get.height * 0.08,
-                                //     child: Center(
-                                //         child: InkWell(
-                                //       onTap: () {
-                                //         call();
-                                //       },
-                                //       child: Image.asset(Images.fingerprint_icon),
-                                //     )),
-                                //   ),
-                                // ),
-                              ],
-                            ),
-                            SizedBox(
-                              height: Get.height * 0.08,
-                            ),
-                            SignupOrLoginText(
-                              pre: 'needhelp'.tr,
-                              suffix: 'helpcenter'.tr,
-                              onTap: () {
-                                //Get.to(() => const RegisterScreens());
-                                launchWhatsApp();
-                                // Get.to(NoDataFound());
-                              },
-                            )
-                          ],
-                        ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(
+                            height: Get.height * 0.08,
+                          ),
+                          SignupOrLoginText(
+                            pre: 'needhelp'.tr,
+                            suffix: 'helpcenter'.tr,
+                            onTap: () {
+                              //Get.to(() => const RegisterScreens());
+                              launchWhatsApp();
+                              // Get.to(NoDataFound());
+                            },
+                          )
+                        ],
                       ),
                     ),
                   ),
-                ],
-              )),
+                ),
+              ],
             )),
-      );
+          ));
     });
   }
 }
@@ -388,6 +369,7 @@ class AuthTextField extends StatelessWidget {
   final int? maxLines;
   final ValueChanged<String>? onChangedwidget;
   final Color? bordercolor;
+  final bool? visitoutside;
 
   const AuthTextField({
     super.key,
@@ -402,6 +384,7 @@ class AuthTextField extends StatelessWidget {
     this.label,
     this.maxLines,
     this.bordercolor,
+    this.visitoutside,
   });
 
   @override
@@ -425,7 +408,9 @@ class AuthTextField extends StatelessWidget {
             .bodySmall!
             .copyWith(color: ColorManager.kRedColor, fontSize: 12),
         suffixIcon: suffixIcon,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+        contentPadding: EdgeInsets.symmetric(
+            horizontal: Get.width * 0.04,
+            vertical: visitoutside == true ? Get.height * 0.02 : 0),
         hintText: hintText,
         hintStyle:
             GoogleFonts.poppins(color: ColorManager.kGreyColor, fontSize: 12),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hrm_emedicare/helper/colormanager/color_manager.dart';
@@ -16,7 +15,7 @@ class Customcontainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: Get.height * 0.075,
+      height: Get.height * 0.095,
       width: Get.width * 0.29,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),

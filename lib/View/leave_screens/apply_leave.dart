@@ -14,18 +14,29 @@ import 'package:hrm_emedicare/components/customforwardcard.dart';
 import 'package:hrm_emedicare/components/image_container/images_container.dart';
 import 'package:hrm_emedicare/components/primary_button.dart';
 import 'package:hrm_emedicare/components/searchable_dropdown.dart';
-import 'package:hrm_emedicare/data/controller/auth_controller/auth_controller.dart';
 import 'package:hrm_emedicare/data/controller/leave_controller/leave_controller.dart';
 import 'package:hrm_emedicare/helper/colormanager/color_manager.dart';
 
-class ApplyLeave extends StatelessWidget {
+class ApplyLeave extends StatefulWidget {
   const ApplyLeave({super.key});
   static bool checkval = true;
 
   @override
-  Widget build(BuildContext context) {
+  State<ApplyLeave> createState() => _ApplyLeaveState();
+}
+
+class _ApplyLeaveState extends State<ApplyLeave> {
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  void getData() async {
+    LeaveController.i.getleavestatus();
+
     Get.put(LeaveController());
-    LeaveController.i.getdepaartment(AuthController.i.userProfile?.id);
+    LeaveController.i.getdepaartment();
     LeaveController.i.getleavetype();
     LeaveController.i.getleavebalance();
     LeaveController.i.getlinemanager();
@@ -33,15 +44,19 @@ class ApplyLeave extends StatelessWidget {
     final lev = Get.put(LeaveController());
     final cont = Get.find<LeaveController>();
     cont.updateleaves();
-    int remainingLeaves() {
-      int allocatedLeaves =
-          int.parse(cont.leavebalance?.allocatedLeaves?.toString() ?? "0");
-      int availedLeaves =
-          int.parse(cont.leavebalance?.availedLeaves?.toString() ?? "0");
-      return allocatedLeaves - availedLeaves;
-    }
+  }
 
-    final formKey = GlobalKey<FormState>();
+  int remainingLeaves() {
+    int allocatedLeaves = int.parse(
+        LeaveController.i.leavebalance?.allocatedLeaves?.toString() ?? "0");
+    int availedLeaves = int.parse(
+        LeaveController.i.leavebalance?.availedLeaves?.toString() ?? "0");
+    return allocatedLeaves - availedLeaves;
+  }
+
+  final formKey = GlobalKey<FormState>();
+  @override
+  Widget build(BuildContext context) {
     return Form(
       key: formKey,
       child: SingleChildScrollView(
@@ -86,7 +101,7 @@ class ApplyLeave extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 1),
                   child: TextFormField(
                     decoration: InputDecoration(
-                        border: checkval
+                        border: ApplyLeave.checkval
                             ? OutlineInputBorder(
                                 borderSide: const BorderSide(
                                   color: ColorManager.kgreencolorstatus,
@@ -111,9 +126,6 @@ class ApplyLeave extends StatelessWidget {
                         suffixIcon: const Icon(
                           Icons.arrow_drop_down,
                           size: 20,
-                          // color: selectedGender != null
-                          //     ? Colors.black
-                          //     : Colors.black,
                         )),
                     readOnly: true,
                     onTap: () async {
@@ -159,7 +171,6 @@ class ApplyLeave extends StatelessWidget {
                         ],
                       )
                     : const SizedBox.shrink(),
-
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Row(
@@ -194,7 +205,6 @@ class ApplyLeave extends StatelessWidget {
                     ],
                   ),
                 ),
-
                 cont.selectedLeaveType == 1
                     ? Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -272,11 +282,7 @@ class ApplyLeave extends StatelessWidget {
                           )
                         ],
                       )
-                    :
-                    // SizedBox(
-                    //   height: Get.height * 0.03,
-                    // ),
-                    Row(
+                    : Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           InkWell(
@@ -377,7 +383,7 @@ class ApplyLeave extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 1),
                         child: TextFormField(
                           decoration: InputDecoration(
-                              border: checkval
+                              border: ApplyLeave.checkval
                                   ? OutlineInputBorder(
                                       borderSide: const BorderSide(
                                         color: ColorManager.kgreencolorstatus,
@@ -433,24 +439,6 @@ class ApplyLeave extends StatelessWidget {
                           },
                         ),
                       ),
-                      // cont.selectleavetype?.name == null && cont.chk == true
-                      //     ? const Row(
-                      //         children: [
-                      //           Padding(
-                      //             padding: EdgeInsets.symmetric(
-                      //                 horizontal: 10, vertical: 5),
-                      //             child: Text(
-                      //               "Please Select Leave Type",
-                      //               style: TextStyle(
-                      //                 color: Colors.red,
-                      //                 fontSize: 12,
-                      //                 fontWeight: FontWeight.w500,
-                      //               ),
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       )
-                      //     : const SizedBox.shrink(),
                       SizedBox(
                         height: 10.h,
                       ),
@@ -536,7 +524,6 @@ class ApplyLeave extends StatelessWidget {
                 SizedBox(
                   height: Get.height * 0.05,
                 ),
-
                 AuthTextField(
                   label: Text(
                     "title".tr,
@@ -556,7 +543,6 @@ class ApplyLeave extends StatelessWidget {
                 SizedBox(
                   height: Get.height * 0.05,
                 ),
-
                 AuthTextField(
                   label: Text(
                     "discription".tr,
@@ -583,7 +569,6 @@ class ApplyLeave extends StatelessWidget {
                     cont.picksinglefile();
                   },
                 ),
-
                 SizedBox(
                   height: Get.height * 0.03,
                 ),
@@ -603,7 +588,7 @@ class ApplyLeave extends StatelessWidget {
                               width: Get.width * 0.68,
                               child: TextFormField(
                                 decoration: InputDecoration(
-                                    border: checkval
+                                    border: ApplyLeave.checkval
                                         ? OutlineInputBorder(
                                             borderSide: const BorderSide(
                                               color: ColorManager
@@ -634,9 +619,6 @@ class ApplyLeave extends StatelessWidget {
                                     suffixIcon: const Icon(
                                       Icons.arrow_drop_down,
                                       size: 20,
-                                      // color: selectedGender != null
-                                      //     ? Colors.black
-                                      //     : Colors.black,
                                     )),
                                 readOnly: true,
                                 onTap: () async {
@@ -658,9 +640,7 @@ class ApplyLeave extends StatelessWidget {
                                   }
                                   return null;
                                 },
-                                onChanged: (value) {
-                                  // Handle the onChanged event if needed
-                                },
+                                onChanged: (value) {},
                               ),
                             ),
                           ),
@@ -697,24 +677,6 @@ class ApplyLeave extends StatelessWidget {
                     ],
                   ),
                 ),
-                // cont.selectedmanager?.name == null && cont.chk == true
-                //     ? const Row(
-                //         children: [
-                //           Padding(
-                //             padding: EdgeInsets.symmetric(
-                //                 horizontal: 10, vertical: 5),
-                //             child: Text(
-                //               "Please Select Line Manager",
-                //               style: TextStyle(
-                //                 color: Colors.red,
-                //                 fontSize: 12,
-                //                 fontWeight: FontWeight.w500,
-                //               ),
-                //             ),
-                //           ),
-                //         ],
-                //       )
-                //     : const SizedBox.shrink(),
                 SizedBox(
                   height: Get.height * 0.03,
                 ),
@@ -740,31 +702,9 @@ class ApplyLeave extends StatelessWidget {
                         // ignore: use_build_context_synchronously
                         FocusScope.of(context).unfocus();
                       }
-
-                      // if (_formKey.currentState!.validate()) {
-                      //   FocusScope.of(context).unfocus();
-
-                      //   // try {
-                      //   //   await AuthRepo.login(
-                      //   //       cnic: login.emailController.text,
-                      //   //       password:
-                      //   //           login.passwordController.text);
-                      //   // } catch (e) {}
-                      // }
                     },
                     color: ColorManager.kgreencolorstatus,
                     textcolor: ColorManager.kWhiteColor),
-
-                // ListView.builder(
-                //     physics: const NeverScrollableScrollPhysics(),
-                //     itemCount: 3,
-                //     shrinkWrap: true,
-                //     itemBuilder: (ctx, index) {
-                //       return Attendancehistorycard(
-                //         trailingcolor: ColorManager.kgreencolorstatus,
-                //         text: "P",
-                //       );
-                //     })
                 SizedBox(
                   height: Get.height * 0.02,
                 ),

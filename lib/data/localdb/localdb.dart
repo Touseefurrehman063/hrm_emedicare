@@ -15,6 +15,72 @@ class Prefs {
     return username;
   }
 
+  saveUserId(String? userId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('UserId', '$userId');
+  }
+
+  Future<String?>? getUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? result = prefs.getString('UserId');
+    return result;
+  }
+
+  saveEmployeeNo(String? employeeNo) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('EmployeeNo', '$employeeNo');
+  }
+
+  Future<String?>? getEmployeeNo() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? result = prefs.getString('EmployeeNo');
+    return result;
+  }
+
+  saveOrganizationId(String? organizationId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('OrganizationId', '$organizationId');
+  }
+
+  Future<String?>? getOrganizationId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? result = prefs.getString('OrganizationId');
+    return result;
+  }
+
+  saveImagePath(String? imagePath) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('ImagePath', '$imagePath');
+  }
+
+  Future<String?>? getImagePath() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? result = prefs.getString('ImagePath');
+    return result;
+  }
+
+  saveUserDesignation(String? userDesignation) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('UserDesignation', '$userDesignation');
+  }
+
+  Future<String?>? getUserDesignation() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? result = prefs.getString('UserDesignation');
+    return result;
+  }
+
+  saveDeviceToken(String? token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('DeviceToken', '$token');
+  }
+
+  Future<String?>? getDeviceToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? result = prefs.getString('DeviceToken');
+    return result;
+  }
+
   setuser(username) async {
     await init();
     prefs?.setString("userName", username);
